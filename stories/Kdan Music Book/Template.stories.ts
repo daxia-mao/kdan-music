@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import Template from './Template';
 
 const meta: Meta<typeof Template> = {
-  title: 'Template',
+  title: 'Kdan Music/Template',
   component: Template,
   tags: ['autodocs'],
 
