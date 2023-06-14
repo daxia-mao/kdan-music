@@ -1,4 +1,6 @@
 import { css, FlattenSimpleInterpolation } from "styled-components";
+import "@fontsource/inter";
+import "@fontsource/poppins";
 
 /**
  *
