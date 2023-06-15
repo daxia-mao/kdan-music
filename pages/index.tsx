@@ -1,7 +1,5 @@
-import Button from "@/stories/Kdan Music Book/Button";
-import theme from "@/stories/Kdan Music Book/theme";
+import Header from "@/stories/Kdan Music Book/Header";
 import Head from "next/head";
-import { ThemeProvider } from "styled-components";
 
 export default function Home() {
   return (
@@ -10,12 +8,8 @@ export default function Home() {
         <title>凱鈿音樂</title>
       </Head>
       <main className="w-full">
-        <ThemeProvider theme={theme}>
-          <Button variant="primary" size="large">
-            Primary Button
-          </Button>
-        </ThemeProvider>
+        <Header />
       </main>
     </>
-  )
+  );
 }
