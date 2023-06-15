@@ -2,7 +2,8 @@ import "@/styles/globals.css";
 import { ThemeProvider } from "styled-components";
 import theme from "@/stories/Kdan Music Book/theme";
 import type { AppProps } from "next/app";
-import Head from "next/head";
+import "@fontsource/inter";
+import "@fontsource/poppins";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
