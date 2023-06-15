@@ -3,6 +3,8 @@ import type { Preview } from "@storybook/react";
 import "../styles/globals.css";
 import { ThemeProvider } from "styled-components";
 import theme from "../stories/Kdan Music Book/theme";
+import "@fontsource/poppins";
+import "@fontsource/inter";
 
 const preview: Preview = {
   parameters: {
