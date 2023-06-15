@@ -3,7 +3,6 @@ import Image from "next/image";
 import styled, { keyframes } from "styled-components";
 import { IoIosSearch } from "react-icons/io";
 import HeaderBgSrc from "./assets/Header/headerbg.png";
-import SearchForm from "./SearchForm";
 
 type HeaderProps = {};
 
