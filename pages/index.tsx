@@ -1,4 +1,5 @@
 import Header from "@/stories/Kdan Music Book/Header";
+import Trust from "@/stories/Kdan Music Book/Trust";
 import Head from "next/head";
 
 export default function Home() {
@@ -9,6 +10,7 @@ export default function Home() {
       </Head>
       <main className="w-full">
         <Header />
+        <Trust />
       </main>
     </>
   );
