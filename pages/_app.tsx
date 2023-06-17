@@ -1,14 +1,18 @@
 import "@/styles/globals.css";
 import { ThemeProvider } from "styled-components";
+import { Provider } from "react-redux";
 import theme from "@/stories/Kdan Music Book/theme";
 import type { AppProps } from "next/app";
 import "@fontsource/inter";
 import "@fontsource/poppins";
+import { store } from "@/stories/Kdan Music Book/store";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ThemeProvider theme={theme}>
-      <Component {...pageProps} />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </Provider>
   );
 }
