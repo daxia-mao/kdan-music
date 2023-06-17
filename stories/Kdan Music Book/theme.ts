@@ -1,4 +1,4 @@
-import { css, FlattenSimpleInterpolation } from "styled-components";
+import { css, FlattenSimpleInterpolation, Keyframes, keyframes } from "styled-components";
 
 /**
  *
@@ -92,6 +92,31 @@ function getCapitalised() {
   `;
 }
 
+const glow = keyframes`
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+`
+
+const fade = keyframes`
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+`
+
+function getSkeltonStyle() {
+  return css`
+    background-color: #eee;
+    animation: ${glow} 1.5s ease-in-out infinite;
+  `;
+}
+
 /**
  *
  *  Theme 主題彙總
@@ -127,6 +152,13 @@ export interface ThemeType {
     getLabel: ({ level }: LabelProps) => FlattenSimpleInterpolation;
     getCapitalised: () => FlattenSimpleInterpolation;
   };
+  animation: {
+    keyframes: {
+      glow: Keyframes,
+      fade: Keyframes
+    }
+    getSkeltonStyle: () => FlattenSimpleInterpolation;
+  };
 }
 
 const theme: ThemeType = {
@@ -155,6 +187,13 @@ const theme: ThemeType = {
     getCaption,
     getLabel,
     getCapitalised,
+  },
+  animation: {
+    keyframes: {
+      glow,
+      fade,
+    },
+    getSkeltonStyle,
   },
 };
 
