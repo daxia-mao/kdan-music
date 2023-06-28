@@ -2,7 +2,7 @@ import React from "react";
 import CategoryItem from "./CategoryItem";
 import styled from "styled-components";
 import Button from "./Button";
-import { useGetPopularCategoriesQuery } from "./features/api/apiSlice";
+import { fetchHooks } from "./api";
 
 type PopularCategoriesProps = {};
 
@@ -71,32 +71,21 @@ const PopularCategoriesWrapper = styled.div`
 `;
 
 function PopularCategories({}: PopularCategoriesProps) {
-  const {
-    data: categoryInfoList,
-    isError,
-    isLoading,
-  } = useGetPopularCategoriesQuery();
-
-  const LoadingContent = () => {
-    return [...Array(12)].map((_, index) => (
-      <CategoryItem
-        key={index}
-        id={`${index}`}
-        name={""}
-        iconSrc={""}
-        isLoading={isLoading}
-      />
-    ));
-  };
+  
+  const { data: categories, isLoading } = fetchHooks.useGetPopularCategories({
+    limit: "12",
+    country: "JP",
+  });
 
   const CategoriesContent =
-    categoryInfoList &&
-    categoryInfoList.map((categoryInfo) => (
+    categories &&
+    categories.map((category, index) => (
       <CategoryItem
-        key={categoryInfo.id}
-        id={categoryInfo.id}
-        name={categoryInfo.name}
-        iconSrc={categoryInfo.icons[0].url}
+        key={category.id}
+        id={category.id}
+        name={category.name}
+        iconSrc={category.icons[0].url}
+        index={index}
       />
     ));
 
@@ -105,7 +94,6 @@ function PopularCategories({}: PopularCategoriesProps) {
       <Heading>在 Spotify 中最熱門的分類</Heading>
       <CategoriesContanier>
         <CategoriesWrapper>
-          {isLoading && <LoadingContent />}
           {CategoriesContent}
         </CategoriesWrapper>
       </CategoriesContanier>

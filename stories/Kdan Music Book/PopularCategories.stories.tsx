@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import PopularCategories from './PopularCategories';
 import { Provider } from 'react-redux';
-import { store } from './store';
 
 const meta: Meta<typeof PopularCategories> = {
   title: 'Kdan Music/Popular Categories',
@@ -10,9 +9,6 @@ const meta: Meta<typeof PopularCategories> = {
   parameters: {
     layout: "fullscreen",
   },
-  decorators: [Story => <Provider store={store}>
-    <Story />
-  </Provider>]
 }
 
 export default meta;
