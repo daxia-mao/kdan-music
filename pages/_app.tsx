@@ -11,6 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <ThemeProvider theme={theme}>
       <Navbar />
       <Component {...pageProps} />
+      <Analytics />
     </ThemeProvider>
   );
 }
