@@ -1,12 +1,14 @@
 import React from "react";
 import Image from "next/image";
-import styled, { css, keyframes } from "styled-components";
+import styled, { keyframes } from "styled-components";
+import { motion } from "framer-motion";
 
 interface CategoryItemProps {
   id: string;
   name: string;
   iconSrc: string;
   isLoading?: boolean;
+  index: number;
 }
 
 const moveUp = keyframes`
@@ -40,7 +42,7 @@ const CategoryImage = styled(Image)`
   transform: translate3d(-50%, -50%, 0);
   transition: all 0.3s;
 `;
-const CategoryItemWrapper = styled.div<{ isLoading: boolean }>`
+const CategoryItemWrapper = styled(motion.div)`
   display: inline-block;
   position: relative;
   width: 157px;
@@ -74,20 +76,14 @@ const CategoryItemWrapper = styled.div<{ isLoading: boolean }>`
       top: 65.5%;
     }
   }
-
-  ${({ isLoading }) =>
-    isLoading &&
-    css`
-      ${(props) => props.theme.animation.getSkeltonStyle()}
-      & > * {
-        display: none;
-      }
-    `}
 `;
 
-const CategoryItem = ({ name, iconSrc, isLoading }: CategoryItemProps) => {
+const CategoryItem = ({ name, iconSrc, index }: CategoryItemProps) => {
   return (
-    <CategoryItemWrapper isLoading={isLoading!}>
+    <CategoryItemWrapper
+      whileInView={{ opacity: [0, 1], x: [-20, 0], y: [10, 0], rotate: [7, 0] }}
+      transition={{ duration: 0.35, delay: index * 0.1 }}
+    >
       <CategoryName>{name}</CategoryName>
       <CategoryImage
         alt={`category_${name}`}
