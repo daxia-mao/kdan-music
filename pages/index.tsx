@@ -1,4 +1,5 @@
 import Header from "@/stories/Kdan Music Book/Header";
+import MusicPreview from "@/stories/Kdan Music Book/MusicPreview";
 import PopularCategories from "@/stories/Kdan Music Book/PopularCategories";
 import Trust from "@/stories/Kdan Music Book/Trust";
 import Head from "next/head";
@@ -12,6 +13,7 @@ export default function Home() {
       <main className="w-full">
         <Header />
         <Trust />
+        <MusicPreview />
         <PopularCategories />
       </main>
     </>
