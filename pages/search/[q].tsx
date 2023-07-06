@@ -10,7 +10,7 @@ export default function Artist() {
     q: query,
     limit: 20,
   });
-  
+
   if (searchResult) {
     return (
       <>
