@@ -15,7 +15,7 @@ export default function Artist() {
     return (
       <>
         <Head>
-          <title>"{query}" 的搜尋結果 - 凱鈿音樂</title>
+          <title>&#34;{query}&#34; 的搜尋結果 - 凱鈿音樂</title>
         </Head>
         <SearchPage query={query} searchItems={searchResult} />
       </>
