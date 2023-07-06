@@ -19,55 +19,74 @@ import {
   TrackObject,
   RecommendationsRequest,
   RecommendationsObject,
+  AlbumRequest,
+  SimplifiedAlbumObject,
+  AlbumsByArtistRequest,
+  ArtistTopTracksRequest,
+  SearchRequest,
+  SearchObject,
 } from "../types";
 
 ////////// ENDPOINTES /////////
 const endpoints = {
-  getTrack: (trackId: string) => `https://api.spotify.com/v1/tracks/${trackId}`,
+  getTrack: (trackId: string) => `/tracks/${trackId}`,
 
-  getArtist: (artistId: string) =>
-    `https://api.spotify.com/v1/artists/${artistId}`,
+  getRecommendations: () => `/recommendations`,
 
-  getSeveralArtists: () => `https://api.spotify.com/v1/artists`,
+  getArtistTopTracks: (artistId: string) => `/artists/${artistId}/top-tracks`,
+
+  getArtist: (artistId: string) => `/artists/${artistId}`,
+
+  getSeveralArtists: () => `/artists`,
 
   getRelatedArtists: (artistId: string) =>
-    `https://api.spotify.com/v1/artists/${artistId}/related-artists`,
+    `/artists/${artistId}/related-artists`,
+
+  getAlbum: (albumId: string) => `/albums/${albumId}`,
+
+  getAlbumsByArtist: (artistId: string) => `/artists/${artistId}/albums`,
 
   getCategories: () => "/browse/categories",
 
-  getPlaylist: (playlistId: string) =>
-    `https://api.spotify.com/v1/playlists/${playlistId}`,
+  getPlaylist: (playlistId: string) => `/playlists/${playlistId}`,
 
-  getPlaylistItems: (playlistId: string) =>
-    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+  getPlaylistItems: (playlistId: string) => `/playlists/${playlistId}/tracks`,
 
   getPlaylistsByCategory: (categoryId: string) =>
-    `https://api.spotify.com/v1/browse/categories/${categoryId}/playlists`,
+    `/browse/categories/${categoryId}/playlists`,
 
   getFeaturedPlaylists: () => "/browse/featured-playlists",
 
-  getRecommendations: () => `https://api.spotify.com/v1/recommendations`,
+  search: () => `/search`,
 };
 
 const fetchers = {
   fetchTrackById,
+  fetchRecommendations,
+  fetchArtistTopTracks,
   fetchArtistById,
   fetchRelatedArtistsById,
+  fetchAlbumById,
+  fetchAlbumsByArtist,
   fetchCategories,
   fetchPlaylistById,
   fetchPlaylistItemsById,
   fetchPlaylistsByCategoryId,
   fetchFeaturedPlaylists,
-  fetchRecommendations,
+  fetchSearchItems,
 };
 
 const fetchHooks = {
   useGetTrackById,
   useGetRecommendations,
+  useGetArtistTopTracks,
+  useGetAlbumById,
+  useGetAlbumsByArtist,
   useGetArtistById,
+  useGetRelatedArtistsById,
   useGetPopularCategories,
   useGetMusicPreviewPlaylists,
-  useGetRelatedArtistsById,
+  useGetSearchItems,
 };
 
 ////////// AXIOS 初始化 //////////
@@ -207,6 +226,31 @@ async function fetchArtistById(
   return res.data;
 }
 
+// 根據傳入的 AlbumId 獲得 AlbumObject
+async function fetchAlbumById(
+  arg: AlbumRequest
+): Promise<SimplifiedAlbumObject> {
+  const albumId = arg.albumId;
+  const endpoint = endpoints.getAlbum(albumId);
+  const res = await spotify.get<SimplifiedAlbumObject>(endpoint);
+  return res.data;
+}
+
+async function fetchAlbumsByArtist(
+  arg: AlbumsByArtistRequest
+): Promise<SimplifiedAlbumObject[]> {
+  const artistId = arg.artistId;
+  const endpoint = endpoints.getAlbumsByArtist(artistId);
+  const res = await spotify.get<{ items: SimplifiedAlbumObject[] }>(endpoint, {
+    params: {
+      id: arg.artistId,
+      include_groups: arg.include_groups?.join(","),
+      limit: String(arg.limit),
+    },
+  });
+  return res.data.items;
+}
+
 // 根據傳入的 ArtistId 獲得相似的 ArtistObject[]
 async function fetchRelatedArtistsById(
   arg: ArtistRequest
@@ -235,12 +279,51 @@ async function fetchRecommendations(
   const res = await spotify.get<RecommendationsObject>(endpoint, {
     params: {
       limit: String(arg.limit),
-      seed_artists: arg.seed_artists.join(','),
-      seed_tracks: arg.seed_tracks.join(','),
-      seed_genres: arg.seed_genres.join(','),
+      seed_artists: arg.seed_artists.join(","),
+      seed_tracks: arg.seed_tracks.join(","),
+      seed_genres: arg.seed_genres.join(","),
     },
   });
   return res.data;
+}
+
+// 根據傳入的 ArtistId 獲得該 Artist 的熱門曲目。
+async function fetchArtistTopTracks(
+  arg: ArtistTopTracksRequest
+): Promise<TrackObject[]> {
+  const endpoint = endpoints.getArtistTopTracks(arg.artistId);
+  const res = await spotify.get<{ tracks: TrackObject[] }>(endpoint, {
+    params: {
+      id: arg.artistId,
+      market: arg.market,
+    },
+  });
+
+  return res.data.tracks;
+}
+
+async function fetchSearchItems(arg: SearchRequest): Promise<SearchObject> {
+  const endpoint = endpoints.search();
+  const res = await spotify.get<{
+    tracks: { items: TrackObject[] };
+    albums: { items: SimplifiedAlbumObject[] };
+    artists: { items: SimplifiedArtistObject[] };
+  }>(endpoint, {
+    params: {
+      q: arg.q,
+      type: `track,album,artist`,
+      limit: String(arg.limit),
+      market: arg.market,
+    },
+  });
+
+  const result: SearchObject = {
+    tracks: res.data.tracks ? res.data.tracks.items : undefined,
+    albums: res.data.albums ? res.data.albums.items : undefined,
+    artists: res.data.artists ? res.data.artists.items : undefined,
+  }
+
+  return result;
 }
 
 ////////// CUSTOM SWR HOOKS //////////
@@ -264,7 +347,7 @@ function useGetMusicPreviewPlaylists() {
       const popularCategorieRes = await fetchCategories({
         limit: "12",
         offset: "1",
-        country,
+        country: "JP",
       });
       const featuredPlaylistsRes = await fetchFeaturedPlaylists({
         limit: "1",
@@ -309,6 +392,24 @@ function useGetMusicPreviewPlaylists() {
   return useSWR("useGetMusicPreviewPlaylists", fetcher);
 }
 
+function useGetTrackById(arg: TrackRequest) {
+  const key = endpoints.getTrack(arg.trackId);
+  const fetcher = () => fetchTrackById(arg);
+  return useSWR({ key, arg }, fetcher);
+}
+
+function useGetAlbumById(arg: AlbumRequest) {
+  const key = endpoints.getAlbum(arg.albumId);
+  const fetcher = () => fetchAlbumById(arg);
+  return useSWR({ key, arg }, fetcher);
+}
+
+function useGetAlbumsByArtist(arg: AlbumsByArtistRequest) {
+  const key = endpoints.getAlbumsByArtist(arg.artistId);
+  const fetcher = () => fetchAlbumsByArtist(arg);
+  return useSWR({ key, arg }, fetcher);
+}
+
 function useGetArtistById(arg: ArtistRequest) {
   const key = endpoints.getArtist(arg.artistId);
   const fetcher = () => fetchArtistById({ artistId: arg.artistId });
@@ -321,18 +422,24 @@ function useGetRelatedArtistsById(arg: ArtistRequest) {
   return useSWR({ key, arg }, fetcher);
 }
 
-function useGetTrackById(arg: TrackRequest) {
-  const key = endpoints.getTrack(arg.trackId);
-  const fetcher = () => fetchTrackById(arg);
-  return useSWR({ key, arg }, fetcher);
-}
-
 function useGetRecommendations(arg: RecommendationsRequest) {
   const key = endpoints.getRecommendations();
   const fetcher = () => fetchRecommendations(arg);
   return useSWR(key, fetcher, {
     revalidateOnFocus: false,
   });
+}
+
+function useGetArtistTopTracks(arg: ArtistTopTracksRequest) {
+  const key = endpoints.getArtistTopTracks(arg.artistId);
+  const fetcher = () => fetchArtistTopTracks(arg);
+  return useSWR(key, fetcher);
+}
+
+function useGetSearchItems(arg: SearchRequest) {
+  const key = endpoints.search();
+  const fetcher = () => fetchSearchItems(arg);
+  return useSWR({ key, arg }, fetcher);
 }
 
 export { fetchers, fetchHooks };
