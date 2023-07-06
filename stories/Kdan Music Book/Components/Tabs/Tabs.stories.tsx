@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Tabs from ".";
-import MusicList from "./MusicList";
-import { Default as MusicList_Default } from "./MusicList.stories";
+import MusicList from "@/stories/Kdan Music Book/Components/MusicList";
+import MusicList_Default from "@/stories/Kdan Music Book/Components/MusicList/MusicList.stories";
+
 const meta: Meta<typeof Tabs> = {
   title: "Kdan Music/Tabs",
   component: Tabs,
