@@ -1,4 +1,4 @@
-import { TestmonialProps } from "../../Testmonial";
+import { TestmonialProps } from "@/stories/Kdan Music Book/Components/Testmonial";
 import AvatarSrcList from "./Avatar";
 import { faker } from "@faker-js/faker";
 
