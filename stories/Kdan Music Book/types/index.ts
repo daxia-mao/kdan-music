@@ -25,6 +25,10 @@ export interface SimplifiedAlbumObject {
   id: string;
   name: string;
   images: ImageObject[];
+  artists: SimplifiedArtistObject[];
+  type?: string;
+  album_type?: string;
+  release_date?: string;
 }
 
 ////////// 曲目 TRACK //////////
@@ -94,6 +98,14 @@ export interface RecommendationsObject {
   tracks: TrackObject[];
 }
 
+////////// 搜尋 SEARCH //////////
+
+export interface SearchObject {
+  tracks?: TrackObject[],
+  albums?: SimplifiedAlbumObject[],
+  artists?: SimplifiedArtistObject[],
+}
+
 ////////// 請求 ENDPOINT REQUEST TYPE //////////
 
 //https://api.spotify.com/v1/browse/categories
@@ -125,6 +137,10 @@ export type PlaylistsByCategoryRequest = {
   limit?: string;
 };
 
+export type AlbumRequest = {
+  albumId: string;
+};
+
 export type ArtistRequest = {
   artistId: string;
 };
@@ -138,4 +154,22 @@ export interface RecommendationsRequest {
   seed_artists: string[];
   seed_genres: string[];
   seed_tracks: string[];
+}
+
+export interface ArtistTopTracksRequest {
+  artistId: string;
+  market?: string;
+}
+
+export interface AlbumsByArtistRequest {
+  artistId: string;
+  include_groups?: string[];
+  limit?: number;
+}
+
+export interface SearchRequest {
+  q: string;
+  type?: string[];
+  limit?: number;
+  market?: string;
 }
