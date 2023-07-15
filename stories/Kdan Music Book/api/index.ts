@@ -179,7 +179,7 @@ const fetchAccessToken = async (): Promise<string> => {
 
 async function fetchPersonalToken(code: string): Promise<AccessTokenType> {
   const res = await axios.get<AccessTokenType>(
-    `${getbaseUrl()}/spotify/getPersonalToken`,
+    `${getbaseUrl()}/api/spotify/getPersonalToken`,
     { params: { code: code } }
   );
   return res.data;

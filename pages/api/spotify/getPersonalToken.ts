@@ -3,6 +3,7 @@ import Cors from "cors";
 import axios from "axios";
 import dotenv from "dotenv";
 import { AccessTokenType } from "@/stories/Kdan Music Book/types";
+import { getbaseUrl } from "@/stories/Kdan Music Book/api";
 dotenv.config({ path: "../.env.local" });
 
 const cors = Cors({
@@ -13,7 +14,7 @@ const cors = Cors({
 const fetchPersonalToken = async (code: string): Promise<AccessTokenType> => {
   try {
     const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
-    const redirect_uri = `http://localhost:3000/callback`;
+    const redirect_uri = `${getbaseUrl()}/callback`;
 
     const authString = `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`;
     const base64AuthString = Buffer.from(authString).toString("base64");
@@ -61,6 +62,7 @@ export default async function handler(
   try {
     const code = req.query.code;
     const result = await fetchPersonalToken(code as string);
+    console.log(result);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json("fetch personal token error!");
