@@ -9,6 +9,7 @@ const cors = Cors({
   methods: ["POST", "GET", "HEAD"],
 });
 
+
 const fetchPersonalToken = async (code: string): Promise<AccessTokenType> => {
   try {
     const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
