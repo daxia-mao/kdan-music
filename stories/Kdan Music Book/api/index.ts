@@ -159,7 +159,7 @@ personalSpotify.interceptors.response.use(
 );
 
 ////////// UTILS /////////
-const productionUrl = process.env.VERCEL_URL || `https://kdan-music.vercel.app`;
+const productionUrl = `https://kdan-music.vercel.app`;
 const devUrl = `http://localhost:3000`;
 
 export const getbaseUrl = () => {
