@@ -1,7 +1,7 @@
 import Head from "next/head";
-import { ArtistPage } from "@/stories/Kdan Music Book/Pages/ArtistPage";
 import { useRouter } from "next/router";
 import { fetchHooks } from "@/stories/Kdan Music Book/api";
+import ArtistPage from "@/stories/Kdan Music Book/Pages/ArtistPage";
 
 export default function Artist() {
   const router = useRouter();

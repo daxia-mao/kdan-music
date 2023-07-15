@@ -28,7 +28,7 @@ function TrackListWithHooks() {
     seed_artists: ["64tJ2EAv1R6UaZqc4iOCyj"],
     seed_genres: [],
   });
-  const tracks = recommendationObj?.tracks;
+  const tracks = recommendationObj;
 
   if (tracks) {
     return <TrackList tracks={tracks} />;
