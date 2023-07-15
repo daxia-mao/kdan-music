@@ -1,5 +1,10 @@
 import List from "@/stories/Kdan Music Book/Components/List";
-import { ArtistItem, ArtistListProps } from ".";
+import { ArtistItem } from ".";
+import { SimplifiedArtistObject } from "@/stories/Kdan Music Book/types";
+
+export interface ArtistListProps {
+  artists: SimplifiedArtistObject[];
+}
 
 const ArtistList = ({ artists }: ArtistListProps) => {
   if (artists) {

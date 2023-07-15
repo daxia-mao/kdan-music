@@ -14,7 +14,5 @@ type Story = StoryObj<typeof ArtistItemWithHooks>;
 
 export const Default: Story = {
   name: "默認 Default",
-  args: {
-
-  },
+  args: {},
 };

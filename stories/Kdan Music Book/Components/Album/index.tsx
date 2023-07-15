@@ -1,15 +1,6 @@
 import AlbumItem from "@/stories/Kdan Music Book/Components/Album/AlbumItem";
 import AlbumList from "@/stories/Kdan Music Book/Components/Album/AlbumList";
 import { fetchHooks } from "@/stories/Kdan Music Book/api";
-import { SimplifiedAlbumObject } from "@/stories/Kdan Music Book/types";
-
-export type AlbumProps = {
-  album: SimplifiedAlbumObject;
-};
-
-export type AlbumListProps = {
-  albums: SimplifiedAlbumObject[];
-};
 
 function AlbumItemWithHooks() {
   const { data: album } = fetchHooks.useGetAlbumById({
@@ -31,4 +22,5 @@ function AlbumListWithHooks() {
     return <AlbumList albums={albums} />;
   }
 }
+
 export { AlbumItem, AlbumList, AlbumItemWithHooks, AlbumListWithHooks };
