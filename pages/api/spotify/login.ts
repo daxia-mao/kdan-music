@@ -1,21 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Cors from "cors";
 import dotenv from "dotenv";
+import { getbaseUrl } from "@/stories/Kdan Music Book/api";
 dotenv.config({ path: "../.env.local" });
 
 const cors = Cors({
   methods: ["POST", "GET", "HEAD"],
 });
-
-const productionUrl = process.env.VERCEL_URL || `https://kdan-music.vercel.app`;
-const devUrl = `http://localhost:3000`;
-
-const getbaseUrl = () => {
-  if (process.env.NODE_ENV === "production") {
-    return productionUrl;
-  }
-  return devUrl;
-};
 
 function runMiddleware(
   req: NextApiRequest,

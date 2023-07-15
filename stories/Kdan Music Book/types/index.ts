@@ -11,6 +11,7 @@ interface ImageObject {
   width: number | null;
 }
 
+
 ////////// 藝人 ARTIST //////////
 export interface SimplifiedArtistObject {
   id: string;
@@ -78,6 +79,7 @@ export interface PlaylistObject {
   images: ImageObject[];
   owner: {
     id: string;
+    dispaly_name: string;
   };
   total: number;
   tracks: {
@@ -89,7 +91,7 @@ export interface PlaylistItemsObject {
 }
 export interface PlaylistsObject {
   playlists: {
-    items: SimplifiedPlaylistObject[];
+    items: PlaylistObject[];
   };
 }
 
@@ -132,7 +134,7 @@ export type CategoriesRequest = {
 };
 
 export type FeaturedPlaylistsRequest = {
-  limit?: string;
+  limit?: number;
   country?: string;
   offset?: string;
 };
@@ -180,7 +182,7 @@ export interface ArtistTopTracksRequest {
 export interface AlbumsByArtistRequest {
   artistId: string;
   include_groups?: string[];
-  limit?: number;
+  limit: number;
 }
 
 export interface SearchRequest {
