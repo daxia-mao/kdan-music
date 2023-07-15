@@ -11,6 +11,7 @@ interface ImageObject {
   width: number | null;
 }
 
+
 ////////// 藝人 ARTIST //////////
 export interface SimplifiedArtistObject {
   id: string;
@@ -78,6 +79,7 @@ export interface PlaylistObject {
   images: ImageObject[];
   owner: {
     id: string;
+    dispaly_name: string;
   };
   total: number;
   tracks: {
@@ -89,7 +91,7 @@ export interface PlaylistItemsObject {
 }
 export interface PlaylistsObject {
   playlists: {
-    items: SimplifiedPlaylistObject[];
+    items: PlaylistObject[];
   };
 }
 
@@ -101,9 +103,25 @@ export interface RecommendationsObject {
 ////////// 搜尋 SEARCH //////////
 
 export interface SearchObject {
-  tracks?: TrackObject[],
-  albums?: SimplifiedAlbumObject[],
-  artists?: SimplifiedArtistObject[],
+  tracks?: TrackObject[];
+  albums?: SimplifiedAlbumObject[];
+  artists?: SimplifiedArtistObject[];
+  playlists?:PlaylistObject[];
+}
+
+////////// 用戶 USER //////////
+
+export interface UserObject {
+  id: string;
+  country: string;
+  display_name: string;
+  email: string;
+  images: ImageObject[];
+}
+
+export interface SavedTrackObject {
+  added_at: string;
+  track: TrackObject;
 }
 
 ////////// 請求 ENDPOINT REQUEST TYPE //////////
@@ -116,7 +134,7 @@ export type CategoriesRequest = {
 };
 
 export type FeaturedPlaylistsRequest = {
-  limit?: string;
+  limit?: number;
   country?: string;
   offset?: string;
 };
@@ -164,7 +182,7 @@ export interface ArtistTopTracksRequest {
 export interface AlbumsByArtistRequest {
   artistId: string;
   include_groups?: string[];
-  limit?: number;
+  limit: number;
 }
 
 export interface SearchRequest {
@@ -172,4 +190,10 @@ export interface SearchRequest {
   type?: string[];
   limit?: number;
   market?: string;
+}
+
+export interface MySavedTracksRequest {
+  market?: string;
+  limit?: number;
+  offset?: string;
 }

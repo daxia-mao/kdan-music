@@ -6,6 +6,13 @@ import Link from "next/link";
 import Image from "next/image";
 import SearchForm from "@/stories/Kdan Music Book/Components/SearchForm";
 import Button from "@/stories/Kdan Music Book/Components/Button";
+import {
+  useAppDispatch,
+  useAppSelector,
+} from "@/stories/Kdan Music Book/app/hooks";
+import { logout } from "@/stories/Kdan Music Book/features/auth/authSlice";
+import { fetchHooks } from "@/stories/Kdan Music Book/api";
+import { useRouter } from "next/router";
 interface NavbarProps {}
 
 const fade = keyframes`
@@ -132,11 +139,31 @@ const NavbarWrapper = styled.nav<NavbarWrapperProps>`
 `;
 
 function Navbar({}: NavbarProps) {
+  const router = useRouter();
   const [isToggle, setIsToggle] = useState(false);
-
+  const isLoign = useAppSelector((state) => state.authReducer.isLogin);
+  const dispatch = useAppDispatch();
   const handleToggle = () => {
     setIsToggle((prev) => !prev);
   };
+  const { data: userProfile } = fetchHooks.useGetMe();
+
+  const userInfo = userProfile && (
+    <div className="flex justify-center items-center gap-6">
+      <Image
+        className="max-h-[48px] max-w-[48px] rounded-full"
+        alt={"user image"}
+        src={userProfile.images[1]?.url}
+        width={160}
+        height={160}
+        quality={100}
+      />
+      <p className="font-extrabold text-md text-white">
+        {userProfile.display_name}
+      </p>
+    </div>
+  );
+
   return (
     <NavbarWrapper isToggle={isToggle}>
       <Logo>
@@ -150,14 +177,33 @@ function Navbar({}: NavbarProps) {
         </MenuItem>
         <MenuItem>推薦</MenuItem>
         <MenuItem>類別</MenuItem>
-        <MenuItem>個人</MenuItem>
+        <MenuItem>
+          <Link href={"/user"}>個人</Link>
+        </MenuItem>
         <MenuItem className="max-w-[128px]">
           <SearchForm />
         </MenuItem>
-
-        <Button variant="primary" size="small">
-          登入
-        </Button>
+        {isLoign ? (
+          <div className="flex gap-6 items-center">
+            {userInfo}
+            <Button
+              variant="tertiary"
+              size="small"
+              onClick={() => {
+                dispatch(logout());
+                router.push("/");
+              }}
+            >
+              登出
+            </Button>
+          </div>
+        ) : (
+          <Link href={"/api/spotify/login"}>
+            <Button variant="primary" size="small">
+              登入
+            </Button>
+          </Link>
+        )}
       </Menu>
       <MenuBackground />
       <ToggleBtn onClick={handleToggle}>

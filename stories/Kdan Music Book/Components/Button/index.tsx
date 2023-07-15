@@ -1,7 +1,7 @@
 /* Librery */
-import React, { ReactNode } from "react";
+import React, { ButtonHTMLAttributes, ReactNode } from "react";
 import styled, { css } from "styled-components";
-interface ButtonProps {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children?: ReactNode;
   className?: string;
   variant: "primary" | "secondary" | "tertiary";
@@ -83,18 +83,21 @@ const ButtonWrapper = styled.button<ButtonWrapperProps>`
     ${getStyleBySize("small")};
   }
 `;
-
-function Button({ variant, size, children, className, ...props }: ButtonProps) {
-  return (
-    <ButtonWrapper
-      variant={variant}
-      size={size}
-      className={className}
-      {...props}
-    >
-      <BtnText>{children}</BtnText>
-    </ButtonWrapper>
-  );
-}
+type RefType = HTMLButtonElement;
+const Button = React.forwardRef<RefType, ButtonProps>(
+  ({ variant, size, children, className, ...props }: ButtonProps, ref) => {
+    return (
+      <ButtonWrapper
+        variant={variant}
+        size={size}
+        className={className}
+        ref={ref}
+        {...props}
+      >
+        <BtnText>{children}</BtnText>
+      </ButtonWrapper>
+    );
+  }
+);
 
 export default Button;

@@ -25,6 +25,9 @@ import {
   ArtistTopTracksRequest,
   SearchRequest,
   SearchObject,
+  UserObject,
+  MySavedTracksRequest,
+  SavedTrackObject,
 } from "../types";
 
 ////////// ENDPOINTES /////////
@@ -58,9 +61,14 @@ const endpoints = {
   getFeaturedPlaylists: () => "/browse/featured-playlists",
 
   search: () => `/search`,
+
+  getMe: () => "/me",
+
+  getMySavedTracks: () => "/me/tracks",
 };
 
 const fetchers = {
+  fetchPersonalToken,
   fetchTrackById,
   fetchRecommendations,
   fetchArtistTopTracks,
@@ -74,6 +82,8 @@ const fetchers = {
   fetchPlaylistsByCategoryId,
   fetchFeaturedPlaylists,
   fetchSearchItems,
+  fetchMe,
+  fetchMySavedTracks,
 };
 
 const fetchHooks = {
@@ -87,6 +97,11 @@ const fetchHooks = {
   useGetPopularCategories,
   useGetMusicPreviewPlaylists,
   useGetSearchItems,
+  useGetPlaylist,
+  useGetFeaturedPlaylists,
+  useGetPersonalToken,
+  useGetMe,
+  useGetMySavedTracks,
 };
 
 ////////// AXIOS 初始化 //////////
@@ -95,11 +110,15 @@ const spotify = axios.create({
   baseURL: "https://api.spotify.com/v1",
 });
 
+const personalSpotify = axios.create({
+  baseURL: "https://api.spotify.com/v1",
+});
+
 ////////// AXIOS 攔截器 //////////
 
-/* 在發送 Spotfiy API Request 前從 localStorage 獲得 AccessToken */
+/* 在發送 Spotfiy API Request 前從 localStorage 獲得 Access Token */
 spotify.interceptors.request.use(async (config) => {
-  const accessToken = getAccessTokenFromLocalStorage();
+  const accessToken = localStorage.getItem("access_token");
   config.headers.Authorization = "Bearer " + accessToken;
   return config;
 });
@@ -112,39 +131,59 @@ spotify.interceptors.response.use(
   async (error) => {
     if (error.response?.status === 401) {
       const newAccessToken = await fetchAccessToken();
-      setAccessTokenToLocalStorage(newAccessToken);
-
+      localStorage.setItem("access_token", newAccessToken);
       /* 手動重新發送一次請求 */
       return spotify(error.config);
     }
   }
 );
 
-////////// UTILS /////////
-const productionUrl = `https://kdan-music.vercel.app/api`;
-const devUrl = `http://localhost:3000/api`;
+/* 在發送 Spotfiy API Request 前從 localStorage 獲得 Personal Token ，並 Dispatch Login */
+personalSpotify.interceptors.request.use(async (config) => {
+  const accessToken = localStorage.getItem("personal_token");
+  config.headers.Authorization = "Bearer " + accessToken;
+  return config;
+});
 
-const getbaseUrl = () => {
+// /* 假如 Error 是 401 (Token 失效)，則 Dispatch Logout */
+personalSpotify.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    if (error.response?.status === 401) {
+      // return spotify(error.config);
+      throw error;
+    }
+  }
+);
+
+////////// UTILS /////////
+const productionUrl = process.env.VERCEL_URL || `https://kdan-music.vercel.app`;
+const devUrl = `http://localhost:3000`;
+
+export const getbaseUrl = () => {
   if (process.env.NODE_ENV === "production") {
     return productionUrl;
   }
   return devUrl;
 };
 
+
 const fetchAccessToken = async (): Promise<string> => {
   const res = await axios.get<AccessTokenType>(
-    `${getbaseUrl()}/spotify/getAccessToken`
+    `${getbaseUrl()}/api/spotify/getAccessToken`
   );
   return res.data.access_token;
 };
 
-const setAccessTokenToLocalStorage = (toekn: string) => {
-  localStorage.setItem("accessToken", toekn);
-};
-
-const getAccessTokenFromLocalStorage = () => {
-  return localStorage.getItem("accessToken");
-};
+async function fetchPersonalToken(code: string): Promise<AccessTokenType> {
+  const res = await axios.get<AccessTokenType>(
+    `${getbaseUrl()}/spotify/getPersonalToken`,
+    { params: { code: code } }
+  );
+  return res.data;
+}
 
 ////////// FETCH FUNCTION //////////
 
@@ -164,11 +203,13 @@ async function fetchCategories(
 // 獲取精選播放清單的集合
 async function fetchFeaturedPlaylists(
   arg?: FeaturedPlaylistsRequest
-): Promise<SimplifiedPlaylistObject[]> {
+): Promise<PlaylistObject[]> {
   const endpoint = endpoints.getFeaturedPlaylists();
   const featuredPlaylistsRes = await spotify.get<PlaylistsObject>(endpoint, {
     params: {
-      ...arg,
+      limit: String(arg?.limit),
+      country: arg?.country,
+      offset: arg?.offset,
     },
   });
   return featuredPlaylistsRes.data.playlists.items;
@@ -309,10 +350,11 @@ async function fetchSearchItems(arg: SearchRequest): Promise<SearchObject> {
     tracks: { items: TrackObject[] };
     albums: { items: SimplifiedAlbumObject[] };
     artists: { items: SimplifiedArtistObject[] };
+    playlists: { items: PlaylistObject[] };
   }>(endpoint, {
     params: {
       q: arg.q,
-      type: `track,album,artist`,
+      type: `track,album,artist,playlist`,
       limit: String(arg.limit),
       market: arg.market,
     },
@@ -322,9 +364,41 @@ async function fetchSearchItems(arg: SearchRequest): Promise<SearchObject> {
     tracks: res.data.tracks ? res.data.tracks.items : undefined,
     albums: res.data.albums ? res.data.albums.items : undefined,
     artists: res.data.artists ? res.data.artists.items : undefined,
-  }
+    playlists: res.data.playlists ? res.data.playlists.items : undefined,
+  };
 
   return result;
+}
+
+async function fetchMe(): Promise<UserObject> {
+  const endpoint = endpoints.getMe();
+  try {
+    const res = await personalSpotify.get<UserObject>(endpoint);
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function fetchMySavedTracks(
+  arg: MySavedTracksRequest
+): Promise<SavedTrackObject[]> {
+  const endpoint = endpoints.getMySavedTracks();
+  try {
+    const res = await personalSpotify.get<{ items: SavedTrackObject[] }>(
+      endpoint,
+      {
+        params: {
+          limit: String(arg.limit),
+          market: arg.market,
+          offset: arg.offset,
+        },
+      }
+    );
+    return res.data.items;
+  } catch (error) {
+    throw error;
+  }
 }
 
 ////////// CUSTOM SWR HOOKS //////////
@@ -342,16 +416,16 @@ function useGetPopularCategories(arg?: CategoriesRequest) {
 }
 
 function useGetMusicPreviewPlaylists() {
-  const country = "JP";
+  const country = "TW";
   const fetcher = async () => {
     try {
       const popularCategorieRes = await fetchCategories({
         limit: "12",
         offset: "1",
-        country: "JP",
+        country,
       });
       const featuredPlaylistsRes = await fetchFeaturedPlaylists({
-        limit: "1",
+        limit: 1,
         offset: "1",
         country,
       });
@@ -440,6 +514,36 @@ function useGetArtistTopTracks(arg: ArtistTopTracksRequest) {
 function useGetSearchItems(arg: SearchRequest) {
   const key = endpoints.search();
   const fetcher = () => fetchSearchItems(arg);
+  return useSWR({ key, arg }, fetcher);
+}
+
+function useGetPlaylist(arg: PlaylistRequest) {
+  const key = endpoints.getPlaylist(arg.pid);
+  const fetcher = () => fetchPlaylistById(arg);
+  return useSWR({ key, arg }, fetcher);
+}
+
+function useGetFeaturedPlaylists(arg: FeaturedPlaylistsRequest) {
+  const key = endpoints.getFeaturedPlaylists();
+  const fetcher = () => fetchFeaturedPlaylists(arg);
+  return useSWR({ key, arg }, fetcher);
+}
+
+function useGetPersonalToken(arg: { code: string }) {
+  const key = "/api/getPersonalToken";
+  const fetcher = () => fetchPersonalToken(arg.code);
+  return useSWR({ key, arg }, fetcher);
+}
+
+function useGetMe() {
+  const key = endpoints.getMe();
+  const fetcher = () => fetchMe();
+  return useSWR(key, fetcher);
+}
+
+function useGetMySavedTracks(arg: MySavedTracksRequest) {
+  const key = endpoints.getMySavedTracks();
+  const fetcher = () => fetchMySavedTracks(arg);
   return useSWR({ key, arg }, fetcher);
 }
 
