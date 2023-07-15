@@ -101,9 +101,25 @@ export interface RecommendationsObject {
 ////////// 搜尋 SEARCH //////////
 
 export interface SearchObject {
-  tracks?: TrackObject[],
-  albums?: SimplifiedAlbumObject[],
-  artists?: SimplifiedArtistObject[],
+  tracks?: TrackObject[];
+  albums?: SimplifiedAlbumObject[];
+  artists?: SimplifiedArtistObject[];
+  playlists?:PlaylistObject[];
+}
+
+////////// 用戶 USER //////////
+
+export interface UserObject {
+  id: string;
+  country: string;
+  display_name: string;
+  email: string;
+  images: ImageObject[];
+}
+
+export interface SavedTrackObject {
+  added_at: string;
+  track: TrackObject;
 }
 
 ////////// 請求 ENDPOINT REQUEST TYPE //////////
@@ -172,4 +188,10 @@ export interface SearchRequest {
   type?: string[];
   limit?: number;
   market?: string;
+}
+
+export interface MySavedTracksRequest {
+  market?: string;
+  limit?: number;
+  offset?: string;
 }
