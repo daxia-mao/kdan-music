@@ -4,7 +4,7 @@ import styled, { css } from "styled-components";
 import Link from "next/link";
 import EmptyAlbumImageSrc from "@/stories/Kdan Music Book/assets/Item/emptyAlbum.png";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { RiCloseFill } from "react-icons/ri";
+import { RiCloseFill, RiHeartLine } from "react-icons/ri";
 import { TrackItemProps } from ".";
 import Card from "@/stories/Kdan Music Book/styled/Card.styled";
 import { makeHsl } from "@/stories/Kdan Music Book/utils";
@@ -13,6 +13,11 @@ const IconBaseStyle = css`
   width: 16px;
   height: 16px;
   cursor: pointer;
+`;
+
+const SaveIcon = styled(RiHeartLine)`
+  font-size: 26px;
+  color: red;
 `;
 
 const DisablePlayIcon = styled(RiCloseFill)`

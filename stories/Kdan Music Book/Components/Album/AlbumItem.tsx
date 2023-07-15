@@ -1,15 +1,18 @@
 import { useColor } from "color-thief-react";
 import EmptyAlbumImageSrc from "@/stories/Kdan Music Book/assets/Item/emptyAlbum.png";
 import Card from "@/stories/Kdan Music Book/styled/Card.styled";
-import { AlbumProps } from "@/stories/Kdan Music Book/Components/Album";
 import { makeHsl } from "@/stories/Kdan Music Book/utils";
+import { SimplifiedAlbumObject } from "@/stories/Kdan Music Book/types";
+
+export type AlbumProps = {
+  album: SimplifiedAlbumObject;
+};
 
 const albumType = {
   album: "專輯",
   single: "單曲",
   compilation: "合輯",
 };
-
 
 function AlbumItem({ album }: AlbumProps) {
   const imageSrc = album.images[0].url ?? EmptyAlbumImageSrc;

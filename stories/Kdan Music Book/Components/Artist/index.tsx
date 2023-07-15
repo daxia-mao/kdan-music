@@ -1,15 +1,6 @@
 import ArtistItem from "@/stories/Kdan Music Book/Components/Artist/ArtistItem";
 import ArtistList from "@/stories/Kdan Music Book/Components/Artist/ArtistList";
 import { fetchHooks } from "@/stories/Kdan Music Book/api";
-import { SimplifiedArtistObject } from "@/stories/Kdan Music Book/types";
-
-export interface ArtistItemProps {
-  artist: SimplifiedArtistObject;
-}
-
-export interface ArtistListProps {
-  artists: SimplifiedArtistObject[];
-}
 
 const ArtistItemWithHooks = () => {
   const { data: artist, error } = fetchHooks.useGetArtistById({

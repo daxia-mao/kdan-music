@@ -47,12 +47,12 @@ const Info = styled.div`
     cursor: pointer;
   }
 `;
-const Image = styled(NextImage)`
+const Image = styled(NextImage)<{ borderRadius?: string }>`
   min-width: 160px;
   min-height: 160px;
   max-width: 160px;
   max-height: 160px;
-  border-radius: 50%;
+  border-radius: ${(props) => props.borderRadius || "50%"};
 `;
 
 const Wrapper = styled.div`

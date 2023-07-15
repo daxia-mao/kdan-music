@@ -2,8 +2,12 @@ import Link from "next/link";
 import EmptyArtistImageSrc from "@/stories/Kdan Music Book/assets/Item/emptyArtist.png";
 import { useColor } from "color-thief-react";
 import Card from "@/stories/Kdan Music Book/styled/Card.styled";
-import { ArtistItemProps } from "@/stories/Kdan Music Book/Components/Artist";
 import { makeHsl } from "@/stories/Kdan Music Book/utils";
+import { SimplifiedArtistObject } from "@/stories/Kdan Music Book/types";
+
+export interface ArtistItemProps {
+  artist: SimplifiedArtistObject;
+}
 
 function ArtistItem({ artist }: ArtistItemProps) {
   const artistImageSrc = artist.images[0]?.url ?? EmptyArtistImageSrc;
@@ -20,7 +24,7 @@ function ArtistItem({ artist }: ArtistItemProps) {
     <Card.Wrapper style={{ backgroundColor: normalHslColor }}>
       <Card.Image
         src={artistImageSrc}
-        alt={`${artist.name} image`}
+        alt={`artist ${artist.name} image`}
         width={160}
         height={160}
         quality={100}
