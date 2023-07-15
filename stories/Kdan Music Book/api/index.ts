@@ -274,8 +274,9 @@ async function fetchTrackById(arg: TrackRequest): Promise<TrackObject> {
 // 根據傳入的 Seed 獲得推薦的 TrackObject[]
 async function fetchRecommendations(
   arg: RecommendationsRequest
-): Promise<RecommendationsObject> {
+): Promise<TrackObject[]> {
   const endpoint = endpoints.getRecommendations();
+  console.log(arg);
   const res = await spotify.get<RecommendationsObject>(endpoint, {
     params: {
       limit: String(arg.limit),
@@ -284,7 +285,7 @@ async function fetchRecommendations(
       seed_genres: arg.seed_genres.join(","),
     },
   });
-  return res.data;
+  return res.data.tracks;
 }
 
 // 根據傳入的 ArtistId 獲得該 Artist 的熱門曲目。

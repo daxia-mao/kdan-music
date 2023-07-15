@@ -1,26 +1,21 @@
-import { ArtistPage } from "@/stories/Kdan Music Book/Pages/ArtistPage/ArtistPage";
-import { ArtistPopularTracks } from "@/stories/Kdan Music Book/Pages/ArtistPage/ArtistPopularTracks/ArtistPopularTracks";
-import { ArtsitHeader } from "@/stories/Kdan Music Book/Pages/ArtistPage/ArtsitHeader/ArtsitHeader";
-import { RelatedArtists } from "@/stories/Kdan Music Book/Pages/ArtistPage/RelatedArtists/RelatedArtists";
-import { fetchHooks } from "@/stories/Kdan Music Book/api";
-import { SimplifiedArtistObject, TrackObject } from "@/stories/Kdan Music Book/types";
 import React from "react";
+import { useColor } from "color-thief-react";
+import EmptyArtistImageSrc from "@/stories/Kdan Music Book/assets/Item/emptyArtist.png";
+import { SimplifiedArtistObject } from "@/stories/Kdan Music Book/types";
+import { fetchHooks } from "@/stories/Kdan Music Book/api";
+import ArtsitHeader from "@/stories/Kdan Music Book/Pages/ArtistPage/ArtsitHeader";
+import ArtistPopularTracks from "@/stories/Kdan Music Book/Pages/ArtistPage/ArtistPopularTracks";
+import ArtistAlbums from "@/stories/Kdan Music Book/Pages/ArtistPage/ArtistAlbums";
+import RelatedArtists from "@/stories/Kdan Music Book/Pages/ArtistPage/RelatedArtists";
+import RecommendationOfArtistPage from "@/stories/Kdan Music Book/Pages/ArtistPage/RecommendationOfArtistPage";
+import { makeHsl } from "@/stories/Kdan Music Book/utils";
+import Page from "@/stories/Kdan Music Book/styled/Page.styled";
 
+type ArtistPageProps = {
+  artist: SimplifiedArtistObject;
+};
 
-export interface ArtistHeaderProps {
-  artist: SimplifiedArtistObject;
-}
-export interface ArtistPopularTracksProps {
-  tracks: TrackObject[];
-}
-export interface RelatedArtistsProps {
-  artist: SimplifiedArtistObject;
-}
-export interface ArtistPageProps {
-  artist: SimplifiedArtistObject;
-}
-
-const ArtistHeaderWithHooks = () => {
+export const ArtistHeaderWithHooks = () => {
   const { data: artist, error } = fetchHooks.useGetArtistById({
     artistId: "1YtYHaWLV0IU7SwhvG6Luk",
   });
@@ -30,18 +25,17 @@ const ArtistHeaderWithHooks = () => {
   }
 };
 
-const ArtistPopularTracksWithHooks = () => {
-  const { data: tracks } = fetchHooks.useGetArtistTopTracks({
-    artistId: "1YtYHaWLV0IU7SwhvG6Luk",
-    market: "TW",
+export const ArtistPopularTracksWithHooks = () => {
+  const { data: artist, error } = fetchHooks.useGetArtistById({
+    artistId: "6T4K8YuFc0JPDrYgABbxao",
   });
 
-  if (tracks) {
-    return <ArtistPopularTracks tracks={tracks} />;
+  if (artist) {
+    return <ArtistPopularTracks artist={artist} />;
   }
 };
 
-const RelatedArtistsWithHooks = () => {
+export const RelatedArtistsWithHooks = () => {
   const { data: artist, error } = fetchHooks.useGetArtistById({
     artistId: "6T4K8YuFc0JPDrYgABbxao",
   });
@@ -51,7 +45,7 @@ const RelatedArtistsWithHooks = () => {
   }
 };
 
-function ArtistPageWithHooks() {
+export function ArtistPageWithHooks() {
   const { data: artist, error } = fetchHooks.useGetArtistById({
     artistId: "6T4K8YuFc0JPDrYgABbxao",
   });
@@ -61,13 +55,23 @@ function ArtistPageWithHooks() {
   }
 }
 
-export {
-  ArtsitHeader,
-  ArtistPopularTracks,
-  RelatedArtists,
-  ArtistPage,
-  ArtistHeaderWithHooks,
-  ArtistPopularTracksWithHooks,
-  RelatedArtistsWithHooks,
-  ArtistPageWithHooks,
-};
+export default function ArtistPage({ artist }: ArtistPageProps) {
+  const artistImageSrc = artist.images[0]?.url ?? EmptyArtistImageSrc;
+
+  const { data: color } = useColor(artistImageSrc, "hslArray", {
+    crossOrigin: "https://i.scdn.co/image/",
+  });
+
+  const hsl = color && ([color[0], color[1], color[2]] as unknown as number[]);
+  const darkHslColor = makeHsl(hsl, [1, 1, 0.5]);
+
+  return (
+    <Page.Wrapper style={{ backgroundColor: darkHslColor ?? "#22223b" }}>
+      <ArtsitHeader artist={artist} />
+      <ArtistPopularTracks artist={artist} />
+      <ArtistAlbums artist={artist} />
+      <RelatedArtists artist={artist} />
+      <RecommendationOfArtistPage artist={artist} />
+    </Page.Wrapper>
+  );
+}
