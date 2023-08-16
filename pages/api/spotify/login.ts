@@ -51,6 +51,7 @@ export default async function handler(
     client_id: `${SPOTIFY_CLIENT_ID}`,
     scope: scope,
     redirect_uri: redirect_uri,
+    show_dialog: "true",
   });
   url.search = params.toString();
 
