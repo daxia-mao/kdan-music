@@ -184,6 +184,7 @@ personalSpotify.interceptors.response.use(
   }
 );
 const baseURL = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_DEV_URL;
+console.log(baseURL);
 ////////// UTILS /////////
 const fetchAccessToken = async (): Promise<string> => {
   const res = await axios.get<AccessTokenType>(
