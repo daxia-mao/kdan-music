@@ -183,28 +183,18 @@ personalSpotify.interceptors.response.use(
     }
   }
 );
-
+const baseURL = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_DEV_URL;
 ////////// UTILS /////////
-const productionUrl = `https://kdan-music.vercel.app`;
-const devUrl = `http://localhost:3000`;
-
-export const getbaseUrl = () => {
-  if (process.env.NODE_ENV === "production") {
-    return productionUrl;
-  }
-  return devUrl;
-};
-
 const fetchAccessToken = async (): Promise<string> => {
   const res = await axios.get<AccessTokenType>(
-    `${getbaseUrl()}/api/spotify/getAccessToken`
+    `${baseURL}/api/spotify/getAccessToken`
   );
   return res.data.access_token;
 };
 
 async function fetchPersonalToken(code: string): Promise<AccessTokenType> {
   const res = await axios.get<AccessTokenType>(
-    `${getbaseUrl()}/api/spotify/getPersonalToken`,
+    `${baseURL}/api/spotify/getPersonalToken`,
     { params: { code: code } }
   );
   return res.data;

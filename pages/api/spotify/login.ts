@@ -1,8 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Cors from "cors";
-import dotenv from "dotenv";
-import { getbaseUrl } from "@/stories/Kdan Music Book/api";
-dotenv.config({ path: "../.env.local" });
 
 const cors = Cors({
   methods: ["POST", "GET", "HEAD"],
@@ -41,8 +38,8 @@ export default async function handler(
   res: NextApiResponse<any>
 ) {
   await runMiddleware(req, res, cors);
-  const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
-  const redirect_uri = `${getbaseUrl()}/callback`;
+  const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, REDIRECT_URL } =
+    process.env;
 
   const scope = authorizationScopes.join(" ");
   const url = new URL(`https://accounts.spotify.com/authorize?`);
@@ -50,7 +47,7 @@ export default async function handler(
     response_type: "code",
     client_id: `${SPOTIFY_CLIENT_ID}`,
     scope: scope,
-    redirect_uri: redirect_uri,
+    redirect_uri: REDIRECT_URL as string,
     show_dialog: "true",
   });
   url.search = params.toString();

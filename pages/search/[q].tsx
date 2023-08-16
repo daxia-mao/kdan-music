@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { fetchHooks } from "@/stories/Kdan Music Book/api";
 import { SearchPage } from "@/stories/Kdan Music Book/Pages/SearchPage";
 
-export default function Artist() {
+export default function Search() {
   const router = useRouter();
   const query = router.query.q as string;
   const { data: searchResult } = fetchHooks.useGetSearchItems({

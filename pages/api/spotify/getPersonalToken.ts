@@ -1,10 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Cors from "cors";
 import axios from "axios";
-import dotenv from "dotenv";
 import { AccessTokenType } from "@/stories/Kdan Music Book/types";
-import { getbaseUrl } from "@/stories/Kdan Music Book/api";
-dotenv.config({ path: "../.env.local" });
 
 const cors = Cors({
   methods: ["POST", "GET", "HEAD"],
@@ -12,8 +9,8 @@ const cors = Cors({
 
 const fetchPersonalToken = async (code: string): Promise<AccessTokenType> => {
   try {
-    const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
-    const redirect_uri = `${getbaseUrl()}/callback`;
+    const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, REDIRECT_URL } =
+      process.env;
 
     const authString = `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`;
     const base64AuthString = Buffer.from(authString).toString("base64");
@@ -22,7 +19,7 @@ const fetchPersonalToken = async (code: string): Promise<AccessTokenType> => {
       {
         grant_type: "authorization_code",
         code: code,
-        redirect_uri: redirect_uri,
+        redirect_uri: REDIRECT_URL as string,
       },
       {
         headers: {
