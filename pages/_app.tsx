@@ -8,12 +8,13 @@ import "@fontsource/inter";
 import "@fontsource/poppins";
 import { Provider } from "react-redux";
 import { store } from "@/stories/Kdan Music Book/app/store";
+import Wrapper from "@/pages/wrapper";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <Navbar />
-        <Component {...pageProps} />
+        <Wrapper Component={Component} {...pageProps} />
         <Analytics />
       </ThemeProvider>
     </Provider>
