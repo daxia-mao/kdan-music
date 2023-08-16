@@ -1,7 +1,10 @@
 import styled from "styled-components";
 import NextImage from "next/image";
-
-const SaveIcon = styled.div``;
+const SaveIcon = styled.div`
+  position: absolute;
+  top: 12px;
+  left: 12px;
+`;
 const Type = styled.p`
   position: absolute;
   right: 3.5%;
@@ -47,12 +50,12 @@ const Info = styled.div`
     cursor: pointer;
   }
 `;
-const Image = styled(NextImage)<{ borderRadius?: string }>`
+const Image = styled(NextImage)`
   min-width: 160px;
   min-height: 160px;
   max-width: 160px;
   max-height: 160px;
-  border-radius: ${(props) => props.borderRadius || "50%"};
+  border-radius: 50%;
 `;
 
 const Wrapper = styled.div`
@@ -102,6 +105,7 @@ const Card = {
   Title,
   Subtitle,
   Type,
+  SaveIcon,
 };
 
 export default Card;
