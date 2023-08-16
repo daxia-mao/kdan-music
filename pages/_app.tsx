@@ -8,7 +8,22 @@ import "@fontsource/inter";
 import "@fontsource/poppins";
 import { Provider } from "react-redux";
 import { store } from "@/stories/Kdan Music Book/app/store";
-import Wrapper from "@/pages/wrapper";
+import { useAppDispatch } from "@/stories/Kdan Music Book/app/hooks";
+import { useEffect } from "react";
+import { reAuth } from "@/stories/Kdan Music Book/features/auth/authSlice";
+
+function Wrapper({ Component, pageProps }: AppProps) {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const check = async () => {
+      dispatch(reAuth());
+    };
+    check();
+  }, []);
+  return <Component {...pageProps} />;
+}
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <Provider store={store}>
