@@ -1,5 +1,16 @@
+import ArtistPage from "@/stories/Kdan Music Book/Pages/ArtistPage";
+import { fetchHooks } from "@/stories/Kdan Music Book/api";
 import type { Meta, StoryObj } from "@storybook/react";
-import { ArtistPageWithHooks } from ".";
+
+export function ArtistPageWithHooks() {
+  const { data: artist, error } = fetchHooks.useGetArtistById({
+    artistId: "6T4K8YuFc0JPDrYgABbxao",
+  });
+
+  if (artist) {
+    return <ArtistPage artist={artist} />;
+  }
+}
 
 const meta: Meta<typeof ArtistPageWithHooks> = {
   title: "Kdan Music/Artist Page",

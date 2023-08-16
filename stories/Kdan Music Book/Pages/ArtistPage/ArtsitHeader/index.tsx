@@ -4,8 +4,9 @@ import EmptyArtistImageSrc from "@/stories/Kdan Music Book/assets/Item/emptyArti
 import Header from "@/stories/Kdan Music Book/styled/Page.Header.styled";
 import { makeHsl } from "@/stories/Kdan Music Book/utils";
 import { SimplifiedArtistObject } from "@/stories/Kdan Music Book/types";
-import { RiHeartLine, RiSpotifyFill } from "react-icons/ri";
+import { RiSpotifyFill } from "react-icons/ri";
 import Link from "next/link";
+import { SavedButton } from "@/stories/Kdan Music Book/Components/SavedButton";
 
 export interface ArtistHeaderProps {
   artist: SimplifiedArtistObject;
@@ -37,9 +38,8 @@ export default function ArtsitHeader({ artist }: ArtistHeaderProps) {
       />
       <Header.Info>
         <Header.Title>{artist.name}</Header.Title>
-        <div className="flex gap-4 justify-center items-center relative px-6 py-2">
-          <div className="absolute min-w-full min-h-full bg-slate-900 opacity-30 "></div>
-          <RiHeartLine className="text-3xl  text-red-500  opacity-90" />
+        <div className="flex gap-4 justify-center items-center">
+          <SavedButton id={artist.id} type={"following"} />
           <Link href={`https://open.spotify.com/artist/${artist.id}`}>
             <RiSpotifyFill className="text-3xl text-green-400 opacity-90" />
           </Link>

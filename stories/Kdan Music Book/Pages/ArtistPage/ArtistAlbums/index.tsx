@@ -11,16 +11,18 @@ export interface ArtistAlbumsProps {
 export default function ArtistAlbums({ artist }: ArtistAlbumsProps) {
   const { data: albums } = fetchHooks.useGetAlbumsByArtist({
     artistId: artist.id,
-    include_groups: ["album"],
+    include_groups: ["album", "single"],
     limit: 21,
   });
 
-  if (albums) {
+  if (albums && albums.length > 0) {
     return (
       <Page.Section>
         <Page.Title>{artist.name} 的所有專輯</Page.Title>
         <AlbumList albums={albums} />
       </Page.Section>
     );
+  } else {
+    return "";
   }
 }
