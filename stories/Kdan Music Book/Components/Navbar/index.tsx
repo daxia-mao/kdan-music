@@ -42,7 +42,7 @@ function Navbar({}: NavbarProps) {
       </p>
     </div>
   );
-  
+
   return (
     <S.Wrapper isToggle={isToggle}>
       <S.Logo>
@@ -50,7 +50,7 @@ function Navbar({}: NavbarProps) {
           <S.LogoIcon src={LogoSrc} alt="Navbar Logo" />
         </Link>
       </S.Logo>
-      <S.Menu>
+      <S.Menu onClick={() => setIsToggle(false)}>
         <S.MenuItem>
           <Link href={"/"}>主頁</Link>
         </S.MenuItem>
@@ -59,9 +59,6 @@ function Navbar({}: NavbarProps) {
         </S.MenuItem>
         <S.MenuItem>
           <Link href={"/user"}>個人</Link>
-        </S.MenuItem>
-        <S.MenuItem className="max-w-[128px]">
-          <SearchForm />
         </S.MenuItem>
         {authStatus === "success" ? (
           <div className="flex gap-6 items-center">

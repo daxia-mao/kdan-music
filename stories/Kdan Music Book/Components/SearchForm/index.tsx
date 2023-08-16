@@ -8,7 +8,9 @@ function SearchForm({}: SearchFormProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleSubmit = (event: FormEvent) => {
-    router.push(`/search/${searchQuery}`);
+    if (searchQuery) {
+      router.push(`/search/${searchQuery}`);
+    }
     event.preventDefault();
   };
 
