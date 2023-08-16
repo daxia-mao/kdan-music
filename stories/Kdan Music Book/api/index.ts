@@ -25,9 +25,16 @@ import {
   ArtistTopTracksRequest,
   SearchRequest,
   SearchObject,
-  UserObject,
-  MySavedTracksRequest,
+  UserProfileObject,
   SavedTrackObject,
+  SavedAlbumObject,
+  ContentType,
+  fetchMyLibraryRequest,
+  checkMyLibraryRequest,
+  deleteMyLibraryRequest,
+  saveMyLibraryRequest,
+  TracksOfAlbumRequest,
+  CategoryRequest,
 } from "../types";
 
 ////////// ENDPOINTES /////////
@@ -47,9 +54,13 @@ const endpoints = {
 
   getAlbum: (albumId: string) => `/albums/${albumId}`,
 
+  getTracksOfAlbum: (albumId: string) => `/albums/${albumId}/tracks`,
+
   getAlbumsByArtist: (artistId: string) => `/artists/${artistId}/albums`,
 
   getCategories: () => "/browse/categories",
+
+  getCategory: (cid: string) => `/browse/categories/${cid}`,
 
   getPlaylist: (playlistId: string) => `/playlists/${playlistId}`,
 
@@ -64,7 +75,13 @@ const endpoints = {
 
   getMe: () => "/me",
 
-  getMySavedTracks: () => "/me/tracks",
+  getMyLibrary: (type: ContentType) => {
+    return `/me/${type}`;
+  },
+  checkMyLibrary: (type: ContentType) => {
+    return `/me/${type}/contains`;
+  },
+  followPlaylist: (playlistId: string) => `/playlists/${playlistId}/followers`,
 };
 
 const fetchers = {
@@ -73,9 +90,12 @@ const fetchers = {
   fetchRecommendations,
   fetchArtistTopTracks,
   fetchArtistById,
+  fetchArtistsByIds,
   fetchRelatedArtistsById,
   fetchAlbumById,
+  fetchTracksOfAlbum,
   fetchAlbumsByArtist,
+  fetchCategory,
   fetchCategories,
   fetchPlaylistById,
   fetchPlaylistItemsById,
@@ -83,7 +103,10 @@ const fetchers = {
   fetchFeaturedPlaylists,
   fetchSearchItems,
   fetchMe,
-  fetchMySavedTracks,
+  checkItemsFromMyLibrary,
+  fetchItemsFromMyLibrary,
+  removeItemsFromMyLibrary,
+  saveItemsToMyLibrary,
 };
 
 const fetchHooks = {
@@ -92,16 +115,21 @@ const fetchHooks = {
   useGetArtistTopTracks,
   useGetAlbumById,
   useGetAlbumsByArtist,
+  useGetTracksOfAlbum,
   useGetArtistById,
+  useGetSeveralArtistsByIds,
   useGetRelatedArtistsById,
   useGetPopularCategories,
+  useGetCategory,
   useGetMusicPreviewPlaylists,
   useGetSearchItems,
   useGetPlaylist,
   useGetFeaturedPlaylists,
   useGetPersonalToken,
   useGetMe,
-  useGetMySavedTracks,
+  useGetItemsFromMyLibrary,
+  useCheckItemsFromMyLibrary,
+  useGetPlaylistsByCategoryId,
 };
 
 ////////// AXIOS 初始化 //////////
@@ -145,14 +173,12 @@ personalSpotify.interceptors.request.use(async (config) => {
   return config;
 });
 
-// /* 假如 Error 是 401 (Token 失效)，則 Dispatch Logout */
 personalSpotify.interceptors.response.use(
   (response) => {
     return response;
   },
   async (error) => {
     if (error.response?.status === 401) {
-      // return spotify(error.config);
       throw error;
     }
   }
@@ -169,7 +195,6 @@ export const getbaseUrl = () => {
   return devUrl;
 };
 
-
 const fetchAccessToken = async (): Promise<string> => {
   const res = await axios.get<AccessTokenType>(
     `${getbaseUrl()}/api/spotify/getAccessToken`
@@ -185,6 +210,16 @@ async function fetchPersonalToken(code: string): Promise<AccessTokenType> {
   return res.data;
 }
 
+export async function testPersonalTokenValid() {
+  try {
+    const endpoint = endpoints.getMe();
+    const res = await personalSpotify.get(endpoint);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+}
+
 ////////// FETCH FUNCTION //////////
 
 // 獲取熱門類別
@@ -194,10 +229,23 @@ async function fetchCategories(
   const endpoint = endpoints.getCategories();
   const res = await spotify.get<CategoriesObject>(endpoint, {
     params: {
-      ...arg,
+      limit: String(arg?.limit),
+      country: arg?.country,
+      offset: arg?.offset,
     },
   });
   return res.data.categories.items;
+}
+
+async function fetchCategory(arg: CategoryRequest): Promise<CategoryObject> {
+  const endpoint = endpoints.getCategory(arg.categoryId);
+  const res = await spotify.get<CategoryObject>(endpoint, {
+    params: {
+      category_id: arg.categoryId,
+      country: arg?.country,
+    },
+  });
+  return res.data;
 }
 
 // 獲取精選播放清單的集合
@@ -235,7 +283,7 @@ async function fetchPlaylistItemsById(
   const endpoint = endpoints.getPlaylistItems(playlistId);
   const res = await spotify.get<PlaylistItemsObject>(endpoint, {
     params: {
-      limit: arg.limit,
+      limit: String(arg.limit),
       market: arg.market,
     },
   });
@@ -245,12 +293,12 @@ async function fetchPlaylistItemsById(
 // 根據傳入的 CategoryId 獲取播放清單的集合
 async function fetchPlaylistsByCategoryId(
   arg: PlaylistsByCategoryRequest
-): Promise<SimplifiedPlaylistObject[]> {
+): Promise<PlaylistObject[]> {
   const categoryId = arg.categoryId;
   const endpoint = endpoints.getPlaylistsByCategory(categoryId);
   const res = await spotify.get<PlaylistsObject>(endpoint, {
     params: {
-      limit: arg.limit,
+      limit: String(arg.limit),
       country: arg.country,
     },
   });
@@ -267,6 +315,22 @@ async function fetchArtistById(
   return res.data;
 }
 
+async function fetchArtistsByIds(arg: {
+  artistIds: string[];
+}): Promise<SimplifiedArtistObject[]> {
+  const artistIds = arg.artistIds;
+  const endpoint = endpoints.getSeveralArtists();
+  const res = await spotify.get<{ artists: SimplifiedArtistObject[] }>(
+    endpoint,
+    {
+      params: {
+        ids: artistIds.join(","),
+      },
+    }
+  );
+  return res.data.artists;
+}
+
 // 根據傳入的 AlbumId 獲得 AlbumObject
 async function fetchAlbumById(
   arg: AlbumRequest
@@ -275,6 +339,24 @@ async function fetchAlbumById(
   const endpoint = endpoints.getAlbum(albumId);
   const res = await spotify.get<SimplifiedAlbumObject>(endpoint);
   return res.data;
+}
+
+async function fetchTracksOfAlbum(
+  arg: TracksOfAlbumRequest
+): Promise<TrackObject[]> {
+  const albumId = arg.albumId;
+  const endpoint = endpoints.getTracksOfAlbum(albumId);
+  const res = await spotify.get<{ items: TrackObject[] }>(endpoint, {
+    params: {
+      id: arg.albumId,
+      limit: String(arg.limit),
+      market: arg.market,
+    },
+  });
+  const trackIds = res.data.items.map((item) => item.id);
+  const promises = trackIds.map((trackId) => fetchTrackById({ trackId }));
+  const result = await Promise.all(promises);
+  return result;
 }
 
 async function fetchAlbumsByArtist(
@@ -317,7 +399,6 @@ async function fetchRecommendations(
   arg: RecommendationsRequest
 ): Promise<TrackObject[]> {
   const endpoint = endpoints.getRecommendations();
-  console.log(arg);
   const res = await spotify.get<RecommendationsObject>(endpoint, {
     params: {
       limit: String(arg.limit),
@@ -370,32 +451,141 @@ async function fetchSearchItems(arg: SearchRequest): Promise<SearchObject> {
   return result;
 }
 
-async function fetchMe(): Promise<UserObject> {
+async function fetchMe(): Promise<UserProfileObject> {
   const endpoint = endpoints.getMe();
   try {
-    const res = await personalSpotify.get<UserObject>(endpoint);
+    const res = await personalSpotify.get<UserProfileObject>(endpoint);
     return res.data;
   } catch (error) {
     throw error;
   }
 }
 
-async function fetchMySavedTracks(
-  arg: MySavedTracksRequest
-): Promise<SavedTrackObject[]> {
-  const endpoint = endpoints.getMySavedTracks();
+async function fetchItemsFromMyLibrary(
+  arg: fetchMyLibraryRequest
+): Promise<
+  | SavedTrackObject[]
+  | SavedAlbumObject[]
+  | PlaylistObject[]
+  | SimplifiedArtistObject[]
+> {
+  const endpoint = endpoints.getMyLibrary(arg.type);
   try {
-    const res = await personalSpotify.get<{ items: SavedTrackObject[] }>(
-      endpoint,
-      {
+    if (
+      arg.type === "tracks" ||
+      arg.type === "albums" ||
+      arg.type === "playlists"
+    ) {
+      const res = await personalSpotify.get<{
+        items: SavedTrackObject[] | SavedAlbumObject[] | PlaylistObject[];
+      }>(endpoint, {
         params: {
           limit: String(arg.limit),
-          market: arg.market,
-          offset: arg.offset,
         },
-      }
-    );
-    return res.data.items;
+      });
+      return res.data.items;
+    } else {
+      const res = await personalSpotify.get<{
+        artists: { items: SimplifiedArtistObject[] };
+      }>(endpoint, {
+        params: {
+          type: "artist",
+          limit: String(arg.limit),
+        },
+      });
+      return res.data.artists.items;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function checkItemsFromMyLibrary(
+  arg: checkMyLibraryRequest
+): Promise<boolean[]> {
+  const endpoint = endpoints.checkMyLibrary(arg.type);
+  try {
+    if (
+      arg.type === "tracks" ||
+      arg.type === "albums" ||
+      arg.type === "playlists"
+    ) {
+      const res = await personalSpotify.get<boolean[]>(endpoint, {
+        params: {
+          ids: arg.ids.join(","),
+        },
+      });
+
+      return res.data;
+    } else {
+      const res = await personalSpotify.get<boolean[]>(endpoint, {
+        params: {
+          type: "artist",
+          ids: arg.ids.join(","),
+        },
+      });
+      return res.data;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function removeItemsFromMyLibrary(arg: deleteMyLibraryRequest) {
+  const endpoint = endpoints.getMyLibrary(arg.type);
+  try {
+    if (arg.type === "tracks" || arg.type === "albums") {
+      const res = await personalSpotify.delete(endpoint, {
+        data: {
+          ids: arg.ids,
+        },
+      });
+      return res.data;
+    } else if (arg.type === "following") {
+      const res = await personalSpotify.delete(endpoint, {
+        params: {
+          type: "artist",
+        },
+        data: {
+          ids: arg.ids,
+        },
+      });
+      return res.data;
+    } else if (arg.type === "playlists") {
+      const pid = arg.ids.join();
+      const endpoint = endpoints.followPlaylist(pid);
+      const res = await personalSpotify.delete(endpoint);
+      return res.data;
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function saveItemsToMyLibrary(arg: saveMyLibraryRequest) {
+  const endpoint = endpoints.getMyLibrary(arg.type);
+  try {
+    if (arg.type === "tracks" || arg.type === "albums") {
+      const res = await personalSpotify.put(endpoint, null, {
+        params: {
+          ids: arg.ids.join(","),
+        },
+      });
+      return res.data;
+    } else if (arg.type === "following") {
+      const res = await personalSpotify.put(endpoint, null, {
+        params: {
+          type: "artist",
+          ids: arg.ids.join(","),
+        },
+      });
+      return res.data;
+    } else if (arg.type === "playlists") {
+      const pid = arg.ids.join();
+      const endpoint = endpoints.followPlaylist(pid);
+      const res = await personalSpotify.put(endpoint, null);
+      return res.data;
+    }
   } catch (error) {
     throw error;
   }
@@ -415,12 +605,36 @@ function useGetPopularCategories(arg?: CategoriesRequest) {
   );
 }
 
+function useGetCategory(arg: CategoryRequest) {
+  const key = endpoints.getCategories();
+  const fetcher = () => fetchCategory(arg);
+  return useSWR(
+    {
+      key,
+      arg,
+    },
+    fetcher
+  );
+}
+
+function useGetPlaylistsByCategoryId(arg: PlaylistsByCategoryRequest) {
+  const key = endpoints.getPlaylistsByCategory(arg.categoryId);
+  const fetcher = () => fetchPlaylistsByCategoryId(arg);
+  return useSWR(
+    {
+      key,
+      arg,
+    },
+    fetcher
+  );
+}
+
 function useGetMusicPreviewPlaylists() {
-  const country = "TW";
+  const country = "JP";
   const fetcher = async () => {
     try {
       const popularCategorieRes = await fetchCategories({
-        limit: "12",
+        limit: 12,
         offset: "1",
         country,
       });
@@ -437,17 +651,18 @@ function useGetMusicPreviewPlaylists() {
       );
 
       const promiseByEachCategoryId = categoryIdsByPopularCategory.map((cid) =>
-        fetchPlaylistsByCategoryId({ categoryId: cid, country })
+        fetchPlaylistsByCategoryId({ categoryId: cid, country, limit: 1 })
       );
+
       const playlistIdsByCategores = (
         await Promise.all(promiseByEachCategoryId)
-      ).map((playlist) => playlist[0].id);
+      ).map((playlist) => playlist[0]?.id);
 
-      const playlistIdByFeatured = featuredPlaylistsRes[0].id;
+      const playlistIdByFeatured = featuredPlaylistsRes[0]?.id;
       const playlistIds = [playlistIdByFeatured, ...playlistIdsByCategores];
 
       const playlistsRes = await Promise.all(
-        playlistIds.map((pid) => fetchPlaylistItemsById({ pid, limit: "20" }))
+        playlistIds.map((pid) => fetchPlaylistItemsById({ pid, limit: 20 }))
       );
       const resultPlaylists = playlistsRes.map((playlist) => playlist.items);
       const resultPlaylistsValid = resultPlaylists.map((playlist) =>
@@ -479,6 +694,12 @@ function useGetAlbumById(arg: AlbumRequest) {
   return useSWR({ key, arg }, fetcher);
 }
 
+function useGetTracksOfAlbum(arg: TracksOfAlbumRequest) {
+  const key = endpoints.getTracksOfAlbum(arg.albumId);
+  const fetcher = () => fetchTracksOfAlbum(arg);
+  return useSWR({ key, arg }, fetcher);
+}
+
 function useGetAlbumsByArtist(arg: AlbumsByArtistRequest) {
   const key = endpoints.getAlbumsByArtist(arg.artistId);
   const fetcher = () => fetchAlbumsByArtist(arg);
@@ -488,6 +709,12 @@ function useGetAlbumsByArtist(arg: AlbumsByArtistRequest) {
 function useGetArtistById(arg: ArtistRequest) {
   const key = endpoints.getArtist(arg.artistId);
   const fetcher = () => fetchArtistById({ artistId: arg.artistId });
+  return useSWR({ key, arg }, fetcher);
+}
+
+function useGetSeveralArtistsByIds(arg: { artistIds: string[] }) {
+  const key = endpoints.getSeveralArtists();
+  const fetcher = () => fetchArtistsByIds({ artistIds: arg.artistIds });
   return useSWR({ key, arg }, fetcher);
 }
 
@@ -541,9 +768,15 @@ function useGetMe() {
   return useSWR(key, fetcher);
 }
 
-function useGetMySavedTracks(arg: MySavedTracksRequest) {
-  const key = endpoints.getMySavedTracks();
-  const fetcher = () => fetchMySavedTracks(arg);
+function useGetItemsFromMyLibrary(arg: fetchMyLibraryRequest) {
+  const key = endpoints.getMyLibrary(arg.type);
+  const fetcher = () => fetchItemsFromMyLibrary(arg);
+  return useSWR({ key, arg }, fetcher);
+}
+
+function useCheckItemsFromMyLibrary(arg: checkMyLibraryRequest) {
+  const key = endpoints.checkMyLibrary(arg.type);
+  const fetcher = () => checkItemsFromMyLibrary(arg);
   return useSWR({ key, arg }, fetcher);
 }
 
