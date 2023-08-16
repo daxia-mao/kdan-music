@@ -10,7 +10,6 @@ const cors = Cors({
   methods: ["POST", "GET", "HEAD"],
 });
 
-
 const fetchPersonalToken = async (code: string): Promise<AccessTokenType> => {
   try {
     const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
@@ -62,7 +61,6 @@ export default async function handler(
   try {
     const code = req.query.code;
     const result = await fetchPersonalToken(code as string);
-    console.log(result);
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json("fetch personal token error!");

@@ -24,15 +24,27 @@ function runMiddleware(
   });
 }
 
+const authorizationScopes = [
+  "user-read-private",
+  "user-read-email",
+  "user-library-read",
+  "user-library-modify",
+  "user-follow-read",
+  "user-follow-modify",
+  "playlist-read-private",
+  "playlist-modify-public",
+  "playlist-modify-private",
+];
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
   await runMiddleware(req, res, cors);
   const { SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
-  const redirect_uri = `${getbaseUrl()}/callback`
-  
-  const scope = "user-read-private user-read-email user-library-read";
+  const redirect_uri = `${getbaseUrl()}/callback`;
+
+  const scope = authorizationScopes.join(" ");
   const url = new URL(`https://accounts.spotify.com/authorize?`);
   const params = new URLSearchParams({
     response_type: "code",
