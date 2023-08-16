@@ -183,19 +183,22 @@ personalSpotify.interceptors.response.use(
     }
   }
 );
-const baseURL = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_DEV_URL;
-console.log(baseURL);
+// For Storybook
+const devURL = process.env.NEXT_PUBLIC_DEV_URL;
+
 ////////// UTILS /////////
 const fetchAccessToken = async (): Promise<string> => {
   const res = await axios.get<AccessTokenType>(
-    `${baseURL}/api/spotify/getAccessToken`
+    devURL
+      ? `${devURL}/api/spotify/getAccessToken`
+      : "/api/spotify/getAccessToken"
   );
   return res.data.access_token;
 };
 
 async function fetchPersonalToken(code: string): Promise<AccessTokenType> {
   const res = await axios.get<AccessTokenType>(
-    `${baseURL}/api/spotify/getPersonalToken`,
+    "/api/spotify/getPersonalToken",
     { params: { code: code } }
   );
   return res.data;
