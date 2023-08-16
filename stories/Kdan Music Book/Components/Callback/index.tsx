@@ -2,7 +2,7 @@ import {
   useAppDispatch,
   useAppSelector,
 } from "@/stories/Kdan Music Book/app/hooks";
-import { login } from "@/stories/Kdan Music Book/features/auth/authSlice";
+import { auth } from "@/stories/Kdan Music Book/features/auth/authSlice";
 import Header from "@/stories/Kdan Music Book/styled/Page.Header.styled";
 import React, { useEffect } from "react";
 
@@ -11,28 +11,38 @@ type CallbackProps = {
 };
 
 function Callback({ code }: CallbackProps) {
-  const isLogin = useAppSelector((state) => state.authReducer.isLogin);
+  const authState = useAppSelector((state) => state.authReducer.auth.status);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (code) {
-      dispatch(login(code));
-    }
-  }, [isLogin]);
+    dispatch(auth({ code }));
+  }, []);
 
-  if (isLogin) {
-    return (
-      <main className="w-full h-screen bg-slate-900 flex flex-col justify-center items-center">
-        <Header.Wrapper>
-          <Header.Subtitle>登入成功！</Header.Subtitle>
-        </Header.Wrapper>
-      </main>
-    );
-  } else {
+  if (authState === "idle" || authState === "loading") {
     return (
       <main className="w-full h-screen bg-slate-900 flex flex-col justify-center items-center">
         <Header.Wrapper>
           <Header.Subtitle>登入中，請稍後‧‧‧</Header.Subtitle>
+        </Header.Wrapper>
+      </main>
+    );
+  }
+
+  if (authState === "failed") {
+    return (
+      <main className="w-full h-screen bg-slate-900 flex flex-col justify-center items-center">
+        <Header.Wrapper>
+          <Header.Subtitle>登入失敗！</Header.Subtitle>
+        </Header.Wrapper>
+      </main>
+    );
+  }
+
+  if (authState === "success") {
+    return (
+      <main className="w-full h-screen bg-slate-900 flex flex-col justify-center items-center">
+        <Header.Wrapper>
+          <Header.Subtitle>登入成功！</Header.Subtitle>
         </Header.Wrapper>
       </main>
     );

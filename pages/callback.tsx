@@ -8,13 +8,13 @@ type CallbackPageProps = {};
 function CallbackPage({}: CallbackPageProps) {
   const router = useRouter();
   const vertifyCode = router.query.code as string;
-  const isLogin = useAppSelector((state) => state.authReducer.isLogin);
+  const authState = useAppSelector((state) => state.authReducer.auth.status);
 
-  useEffect(() => {
-    if (isLogin) {
-      router.push("/");
-    }
-  }, [isLogin]);
+  if(authState === 'success' || authState === 'failed') {
+    setTimeout(() => {
+      router.push('/')
+    }, 2000);
+  }
 
   if (vertifyCode) {
     return <Callback code={vertifyCode} />;
