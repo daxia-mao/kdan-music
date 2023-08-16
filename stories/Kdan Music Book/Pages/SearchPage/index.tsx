@@ -6,19 +6,14 @@ import Page from "@/stories/Kdan Music Book/styled/Page.styled";
 import { AlbumList } from "@/stories/Kdan Music Book/Components/Album";
 import { TrackList } from "@/stories/Kdan Music Book/Components/Track";
 import { ArtistList } from "@/stories/Kdan Music Book/Components/Artist";
-import { PlaylistObject, SearchObject, SimplifiedAlbumObject, SimplifiedArtistObject, TrackObject } from "@/stories/Kdan Music Book/types";
+import {
+  PlaylistObject,
+  SearchObject,
+  SimplifiedAlbumObject,
+  SimplifiedArtistObject,
+  TrackObject,
+} from "@/stories/Kdan Music Book/types";
 import { PlaylistList } from "@/stories/Kdan Music Book/Components/Playlist";
-
-const SearchPageWithHooks = () => {
-  const { data: searchResult } = fetchHooks.useGetSearchItems({
-    q: "Amazaroshi",
-    limit: 10,
-  });
-
-  if (searchResult) {
-    return <SearchPage query={"...."} searchItems={searchResult} />;
-  }
-};
 
 type SearchPageProps = {
   query: string;
@@ -102,4 +97,3 @@ export function SearchPage({ query, searchItems }: SearchPageProps) {
 }
 
 export default SearchPage;
-export { SearchPageWithHooks };

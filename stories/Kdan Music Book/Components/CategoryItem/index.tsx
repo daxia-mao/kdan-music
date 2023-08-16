@@ -1,99 +1,53 @@
 import React from "react";
-import Image from "next/image";
-import styled, { keyframes } from "styled-components";
-import { motion } from "framer-motion";
-
+import S from "./index.styled";
+import Link from "next/link";
 interface CategoryItemProps {
   id: string;
   name: string;
   iconSrc: string;
   isLoading?: boolean;
-  index: number;
+  index?: number;
 }
 
-const moveUp = keyframes`
-  0% {
-    transform: translate3d(-50%, 150%, 0);
+const CategoryItem = ({ id, name, iconSrc, index }: CategoryItemProps) => {
+  if (index) {
+    return (
+      <Link href={`/category/${id}`}>
+        <S.Wrapper
+          whileInView={{
+            opacity: [0, 1],
+            x: [-20, 0],
+            y: [10, 0],
+            rotate: [7, 0],
+          }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.35, delay: index * 0.1 }}
+        >
+          <S.CategoryName>{name}</S.CategoryName>
+          <S.CategoryImage
+            alt={`category_${name}`}
+            src={iconSrc}
+            width={256}
+            height={256}
+          />
+        </S.Wrapper>
+      </Link>
+    );
+  } else {
+    return (
+      <Link href={`/category/${id}`}>
+        <S.Wrapper>
+          <S.CategoryName>{name}</S.CategoryName>
+          <S.CategoryImage
+            alt={`category_${name}`}
+            src={iconSrc}
+            width={256}
+            height={256}
+          />
+        </S.Wrapper>
+      </Link>
+    );
   }
-
-  100% {
-    transform: translate3d(-50%, -50%, 0);
-  }
-`;
-
-const CategoryName = styled.p`
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate3d(-50%, -50%, 0);
-  transition: all 0.3s;
-  white-space: nowrap;
-  ${(props) =>
-    props.theme.typography.getSubtitle({ level: 2, weight: "reguler" })};
-  color: ${(props) => props.theme.colors.titleLight};
-  font-weight: 600;
-  z-index: 5;
-`;
-const CategoryImage = styled(Image)`
-  position: absolute;
-  top: 62%;
-  left: 50%;
-  transform: translate3d(-50%, -50%, 0);
-  transition: all 0.3s;
-`;
-const CategoryItemWrapper = styled(motion.div)`
-  display: inline-block;
-  position: relative;
-  width: 157px;
-  height: 117px;
-  overflow: hidden;
-  border-radius: 8px;
-  cursor: pointer;
-  &:hover {
-    ${CategoryName} {
-      display: inline-block;
-      animation: ${moveUp} 0.35s ease-out;
-    }
-    ${CategoryImage} {
-      filter: blur(5px);
-      transform: translate3d(-50%, -50%, 0) scale(1.05);
-    }
-  }
-  @media screen and (max-width: ${(props) => props.theme.breakpoints.tablet}) {
-    width: 150px;
-    height: 90px;
-  }
-  @media screen and (max-width: ${(props) => props.theme.breakpoints.mobile}) {
-    width: 139px;
-    height: 70px;
-    ${CategoryName} {
-      ${(props) =>
-        props.theme.typography.getSubtitle({ level: 3, weight: "medium" })};
-      font-weight: 600;
-    }
-    ${CategoryImage} {
-      top: 65.5%;
-    }
-  }
-`;
-
-const CategoryItem = ({ name, iconSrc, index }: CategoryItemProps) => {
-  return (
-    <CategoryItemWrapper
-      whileInView={{ opacity: [0, 1], x: [-20, 0], y: [10, 0], rotate: [7, 0] }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.35, delay: index * 0.1 }}
-    >
-      <CategoryName>{name}</CategoryName>
-      <CategoryImage
-        alt={`category_${name}`}
-        src={iconSrc}
-        width={256}
-        height={256}
-      />
-    </CategoryItemWrapper>
-  );
 };
 
 export default CategoryItem;

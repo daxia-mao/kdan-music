@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { RiDownloadLine, RiHeartLine, RiMoreLine } from "react-icons/ri";
 import { FaPlay, FaPause } from "react-icons/fa";
 
@@ -11,13 +11,16 @@ const HeartIcon = styled(RiHeartLine)``;
 const DownloadIcon = styled(RiDownloadLine)``;
 const MoreIcon = styled(RiMoreLine)``;
 const ArtistWrapper = styled.div`
+  display: flex;
+  gap: 6px;
+  overflow: hidden;
   flex: 1;
   margin-left: 24px;
-  overflow: hidden;
 `;
 const AlbumWrapper = styled.div`
   flex: 1;
   overflow: hidden;
+  margin-left: 24px;
 `;
 const IconWrapper = styled.div`
   flex: 1;
@@ -32,7 +35,7 @@ const IconWrapper = styled.div`
     cursor: pointer;
   }
   & > *:hover {
-    color: pink;
+    opacity: 0.7;
   }
 `;
 const TrackInfo = styled.div`
@@ -45,13 +48,13 @@ const AudioBtnWrapper = styled.div`
   display: flex;
   justify-content: center;
   transition: all 0.2s;
+  white-space: nowrap;
   &:hover {
     transform: scale(1.05);
   }
 `;
 const TrackName = styled.p`
   color: ${(props) => props.theme.colors.titleDark};
-  white-space: nowrap;
   ${(props) =>
     props.theme.typography.getSubtitle({ level: 3, weight: "medium" })}
 `;
@@ -157,7 +160,7 @@ const MusicPreviewer = {
   IconWrapper,
   HeartIcon,
   DownloadIcon,
-  MoreIcon
-}
+  MoreIcon,
+};
 
 export default MusicPreviewer;

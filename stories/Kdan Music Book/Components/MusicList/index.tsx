@@ -2,7 +2,7 @@ import styled, { css } from "styled-components";
 import { TrackObject } from "@/stories/Kdan Music Book/types";
 import MusicPreviewer from "@/stories/Kdan Music Book/Components/MusicPreviewer";
 interface MusicListProps {
-  tracks: TrackObject[] | undefined;
+  tracks: TrackObject[];
 }
 
 const MusicListWrapper = styled.div<{isLoading?: boolean}>`

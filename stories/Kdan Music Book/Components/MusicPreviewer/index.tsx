@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect, useRef } from "react";
 import S from "@/stories/Kdan Music Book/Components/MusicPreviewer/MusicPreviewer.styled";
 import { TrackObject } from "@/stories/Kdan Music Book/types";
+import Link from "next/link";
 interface MusicPreviewProps {
   track: TrackObject;
 }
@@ -11,7 +12,6 @@ function MusicPreviewer({ track }: MusicPreviewProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
-
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.3;
@@ -28,15 +28,21 @@ function MusicPreviewer({ track }: MusicPreviewProps) {
 
   const handleTimeUpdate = () => {
     if (audioRef.current) {
-      const audioDuration = audioRef.current.currentTime;
-      setCurrentTime(Math.floor(audioDuration));
+      const audioCurrentTime = audioRef.current.currentTime;
+      setCurrentTime(Math.floor(audioCurrentTime));
     }
   };
+
   const handleLoaded = () => {
     if (audioRef.current) {
       const audioDuration = audioRef.current.duration;
       setTotalTime(Math.floor(audioDuration));
     }
+  };
+
+  const handleEnded = () => {
+    setCurrentTime(0);
+    setIsPlaying(false);
   };
 
   return (
@@ -46,6 +52,7 @@ function MusicPreviewer({ track }: MusicPreviewProps) {
         src={track?.preview_url || ""}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoaded}
+        onEnded={handleEnded}
       />
       <S.AudioBtnWrapper>
         <S.AudioBtn onClick={() => setIsPlaying((prev) => !prev)}>
@@ -54,18 +61,32 @@ function MusicPreviewer({ track }: MusicPreviewProps) {
       </S.AudioBtnWrapper>
 
       <S.TrackInfo>
-        <S.TrackName>{track ? track.name : "載入中"}</S.TrackName>
+        <Link href={`/track/${track.id}`} className="hover:underline">
+          <S.TrackName>{track.name}</S.TrackName>
+        </Link>
         <S.TrackDuration>
           0:{currentTime} / 0:{totalTime}
         </S.TrackDuration>
       </S.TrackInfo>
 
       <S.ArtistWrapper>
-        <S.ArtistName>{track ? track.artists[0].name : "載入中"}</S.ArtistName>
+        {track.artists.map((artist) => (
+          <Link
+            key={artist.id}
+            href={`/artist/${artist.id}`}
+            className="hover:underline"
+          >
+            <S.ArtistName>{artist.name}</S.ArtistName>
+          </Link>
+        ))}
       </S.ArtistWrapper>
 
       <S.AlbumWrapper>
-        <S.AlbumName>{track ? track.album.name : "載入中"}</S.AlbumName>
+        <S.AlbumName>
+          <Link href={`/album/${track.album.id}`} className="hover:underline">
+            {track ? track.album.name : "載入中"}
+          </Link>
+        </S.AlbumName>
       </S.AlbumWrapper>
 
       <S.IconWrapper>
