@@ -11,6 +11,8 @@ const nextConfig = {
       "seeded-session-images.scdn.co",
       "charts-images.scdn.co",
       "seed-mix-image.spotifycdn.com",
+      "newjams-images.scdn.co",
+      "images-ak.spotifycdn.com",
     ],
   },
   compiler: {
