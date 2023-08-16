@@ -11,6 +11,7 @@ interface ImageObject {
   width: number | null;
 }
 
+export type ContentType = "tracks" | "albums" | "playlists" | "following";
 
 ////////// 藝人 ARTIST //////////
 export interface SimplifiedArtistObject {
@@ -106,12 +107,12 @@ export interface SearchObject {
   tracks?: TrackObject[];
   albums?: SimplifiedAlbumObject[];
   artists?: SimplifiedArtistObject[];
-  playlists?:PlaylistObject[];
+  playlists?: PlaylistObject[];
 }
 
 ////////// 用戶 USER //////////
 
-export interface UserObject {
+export interface UserProfileObject {
   id: string;
   country: string;
   display_name: string;
@@ -124,13 +125,24 @@ export interface SavedTrackObject {
   track: TrackObject;
 }
 
+export interface SavedAlbumObject {
+  added_at: string;
+  album: SimplifiedAlbumObject;
+}
+
 ////////// 請求 ENDPOINT REQUEST TYPE //////////
 
 //https://api.spotify.com/v1/browse/categories
 export type CategoriesRequest = {
-  limit?: string;
+  limit?: number;
   country?: string;
   offset?: string;
+};
+
+export type CategoryRequest = {
+  categoryId: string;
+  country?: string;
+  locale?: string;
 };
 
 export type FeaturedPlaylistsRequest = {
@@ -145,18 +157,24 @@ export type PlaylistRequest = {
 
 export type PlaylistItemsRequest = {
   pid: string;
-  limit?: string;
+  limit?: number;
   market?: string;
 };
 
 export type PlaylistsByCategoryRequest = {
   categoryId: string;
+  limit: number;
   country?: string;
-  limit?: string;
 };
 
 export type AlbumRequest = {
   albumId: string;
+};
+
+export type TracksOfAlbumRequest = {
+  albumId: string;
+  limit: number;
+  market?: string;
 };
 
 export type ArtistRequest = {
@@ -196,4 +214,22 @@ export interface MySavedTracksRequest {
   market?: string;
   limit?: number;
   offset?: string;
+}
+
+export interface fetchMyLibraryRequest {
+  limit?: number;
+  type: ContentType;
+}
+
+export interface checkMyLibraryRequest {
+  type: ContentType;
+  ids: string[];
+}
+export interface deleteMyLibraryRequest {
+  type: ContentType;
+  ids: string[];
+}
+export interface saveMyLibraryRequest {
+  type: ContentType;
+  ids: string[];
 }
