@@ -1,17 +1,17 @@
 import { TrackList } from "@/stories/Kdan Music Book/Components/Track";
-import { fetchHooks } from "@/stories/Kdan Music Book/api";
+import { useAppSelector } from "@/stories/Kdan Music Book/app/hooks";
 import Page from "@/stories/Kdan Music Book/styled/Page.styled";
 import React from "react";
 
 type SavedTracksProps = {};
 
 export function SavedTracks({}: SavedTracksProps) {
-  const { data: savedTracks } = fetchHooks.useGetMySavedTracks({
-    limit: 20,
-  });
-
-  if (savedTracks) {
-    const tracks = savedTracks.map((item) => item.track);
+  const userTracks = useAppSelector(
+    (state) => state.userReducer.user.library.tracks
+  );
+  
+  if (userTracks) {
+    const tracks = userTracks.map(item => item.track);
     return (
       <Page.Section>
         <Page.Title>個人音樂庫</Page.Title>
@@ -21,4 +21,4 @@ export function SavedTracks({}: SavedTracksProps) {
   }
 }
 
-export default SavedTracksProps;
+export default SavedTracks;

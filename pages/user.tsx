@@ -9,36 +9,54 @@ import React, { useEffect } from "react";
 type Props = {};
 
 export default function Personal({}: Props) {
-  const isLogin = useAppSelector((state) => state.authReducer.isLogin);
+  const auth = useAppSelector((state) => state.authReducer.auth);
   const router = useRouter();
   useEffect(() => {
-    if (!isLogin) {
+    if (auth.status === "failed") {
       setTimeout(() => {
         router.push("/");
-      }, 3000);
+      }, 2000);
     }
-  }, [router.isReady]);
-  if (!isLogin) {
+  }, [auth]);
+
+  if (auth.status === "idle" || auth.status === "loading") {
     return (
       <>
         <Head>
           <title>個人 - 凱鈿音樂</title>
         </Head>
-        <Page.Wrapper>
+        <Page.Wrapper className="!flex justify-center item-center">
           <Header.Wrapper>
-            <Header.Subtitle>登入後才可以使用歐☺ ! </Header.Subtitle>
-            <Header.Subtitle>回到首頁中 ···</Header.Subtitle>
+            <Header.Subtitle>載入中！</Header.Subtitle>
           </Header.Wrapper>
         </Page.Wrapper>
       </>
     );
   }
-  return (
-    <>
-      <Head>
-        <title>個人 - 凱鈿音樂</title>
-      </Head>
-      <UserPage />
-    </>
-  );
+
+  if (auth.status === "failed") {
+    return (
+      <>
+        <Head>
+          <title>個人 - 凱鈿音樂</title>
+        </Head>
+        <Page.Wrapper className="!flex justify-center item-center">
+          <Header.Wrapper>
+            <Header.Subtitle>請先登入！</Header.Subtitle>
+          </Header.Wrapper>
+        </Page.Wrapper>
+      </>
+    );
+  }
+
+  if (auth.status === "success") {
+    return (
+      <>
+        <Head>
+          <title>個人 - 凱鈿音樂</title>
+        </Head>
+        <UserPage />
+      </>
+    );
+  }
 }
