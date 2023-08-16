@@ -10,9 +10,10 @@ const PlaylistList = ({ playlists }: ArtistListProps) => {
   if (playlists) {
     return (
       <List chunkSize={10}>
-        {playlists.map((playlist) => (
-          <PlaylistItem key={playlist.id} playlist={playlist} />
-        ))}
+        {playlists.map(
+          (playlist) =>
+            playlist && <PlaylistItem key={playlist.id} playlist={playlist} />
+        )}
       </List>
     );
   }

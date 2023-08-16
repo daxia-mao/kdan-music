@@ -4,20 +4,21 @@ import styled, { css } from "styled-components";
 import Link from "next/link";
 import EmptyAlbumImageSrc from "@/stories/Kdan Music Book/assets/Item/emptyAlbum.png";
 import { FaPause, FaPlay } from "react-icons/fa";
-import { RiCloseFill, RiHeartLine } from "react-icons/ri";
-import { TrackItemProps } from ".";
+import { RiCloseFill } from "react-icons/ri";
 import Card from "@/stories/Kdan Music Book/styled/Card.styled";
 import { makeHsl } from "@/stories/Kdan Music Book/utils";
+import { TrackObject } from "@/stories/Kdan Music Book/types";
+import { SavedButton } from "@/stories/Kdan Music Book/Components/SavedButton";
+
+export type TrackItemProps = {
+  track: TrackObject;
+  isSaved?: boolean;
+};
 
 const IconBaseStyle = css`
   width: 16px;
   height: 16px;
   cursor: pointer;
-`;
-
-const SaveIcon = styled(RiHeartLine)`
-  font-size: 26px;
-  color: red;
 `;
 
 const DisablePlayIcon = styled(RiCloseFill)`
@@ -82,10 +83,12 @@ function TrackItem({ track }: TrackItemProps) {
   const handlePlayClick = () => {
     setIsPlaying((prev) => !prev);
   };
-
+  const handleEnded = () => {
+    setIsPlaying(false);
+  };
   return (
     <Card.Wrapper style={{ backgroundColor: normalHslColor }}>
-      <audio ref={audioRef} src={track.preview_url} />
+      <audio ref={audioRef} onEnded={handleEnded} src={track.preview_url} />
       <AudioBtnWrapper>
         {isPreviewValid ? (
           <AudioBtn onClick={handlePlayClick} style={{ color: darkHslColor }}>
@@ -97,7 +100,9 @@ function TrackItem({ track }: TrackItemProps) {
           </AudioBtn>
         )}
       </AudioBtnWrapper>
-
+      <Card.SaveIcon>
+        <SavedButton id={track.id} type="tracks" />
+      </Card.SaveIcon>
       <Card.Image
         src={imageSrc}
         width={160}
@@ -105,7 +110,9 @@ function TrackItem({ track }: TrackItemProps) {
         alt={`album ${track.album.name} image`}
       />
       <Card.Info>
-        <Card.Title>{track.name}</Card.Title>
+        <Card.Title>
+          <Link href={`/track/${track.id}`}>{track.name}</Link>
+        </Card.Title>
         <div className="flex gap-2">
           {track.artists.map((artist, index) => (
             <Card.Subtitle key={index}>

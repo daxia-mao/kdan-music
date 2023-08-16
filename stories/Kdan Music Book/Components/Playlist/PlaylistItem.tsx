@@ -4,6 +4,7 @@ import { useColor } from "color-thief-react";
 import { makeHsl } from "@/stories/Kdan Music Book/utils";
 import Card from "@/stories/Kdan Music Book/styled/Card.styled";
 import Link from "next/link";
+import { SavedButton } from "@/stories/Kdan Music Book/Components/SavedButton";
 
 export interface PlaylistItemProps {
   playlist: PlaylistObject;
@@ -22,21 +23,22 @@ function PlaylistItem({ playlist }: PlaylistItemProps) {
 
   return (
     <Card.Wrapper style={{ backgroundColor: normalHslColor }}>
+      <Card.SaveIcon>
+        <SavedButton id={playlist.id} type="playlists" />
+      </Card.SaveIcon>
       <Card.Image
         src={ImageSrc}
         alt={`Playlist ${playlist.name} image`}
         width={160}
         height={160}
         quality={100}
-        borderRadius="8px"
+        style={{ borderRadius: "8px" }}
       />
       <Card.Info>
         <Card.Title>
-          <Link href={``}>{playlist.name}</Link>
+          <Link href={`/playlist/${playlist.id}`}>{playlist.name}</Link>
         </Card.Title>
-        <Card.Type style={{ backgroundColor: darkHslColor }}>
-          合輯
-        </Card.Type>
+        <Card.Type style={{ backgroundColor: darkHslColor }}>合輯</Card.Type>
       </Card.Info>
     </Card.Wrapper>
   );

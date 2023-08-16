@@ -1,5 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ArtistListWithHooks } from ".";
+import { ArtistList } from ".";
+import { fetchHooks } from "@/stories/Kdan Music Book/api";
+
+const ArtistListWithHooks = () => {
+  const { data: relatedArtists } = fetchHooks.useGetRelatedArtistsById({
+    artistId: "0bdfiayQAKewqEvaU6rXCv",
+  });
+
+  if (relatedArtists) {
+    return <ArtistList artists={relatedArtists} />;
+  }
+};
 
 const meta: Meta<typeof ArtistListWithHooks> = {
   title: "Kdan Music/Artist List",

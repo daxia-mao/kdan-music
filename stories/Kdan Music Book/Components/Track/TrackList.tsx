@@ -1,6 +1,10 @@
 import List from "@/stories/Kdan Music Book/Components/List";
-import { TrackListProps } from ".";
 import TrackItem from "./TrackItem";
+import { TrackObject } from "@/stories/Kdan Music Book/types";
+
+export type TrackListProps = {
+  tracks: TrackObject[];
+};
 
 const TrackList = ({ tracks }: TrackListProps) => {
   if (tracks) {
@@ -13,5 +17,4 @@ const TrackList = ({ tracks }: TrackListProps) => {
     );
   }
 };
-
 export default TrackList;

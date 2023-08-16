@@ -4,6 +4,7 @@ import { useColor } from "color-thief-react";
 import Card from "@/stories/Kdan Music Book/styled/Card.styled";
 import { makeHsl } from "@/stories/Kdan Music Book/utils";
 import { SimplifiedArtistObject } from "@/stories/Kdan Music Book/types";
+import { SavedButton } from "@/stories/Kdan Music Book/Components/SavedButton";
 
 export interface ArtistItemProps {
   artist: SimplifiedArtistObject;
@@ -22,6 +23,9 @@ function ArtistItem({ artist }: ArtistItemProps) {
 
   return (
     <Card.Wrapper style={{ backgroundColor: normalHslColor }}>
+      <Card.SaveIcon>
+        <SavedButton id={artist.id} type="following"/>
+      </Card.SaveIcon>
       <Card.Image
         src={artistImageSrc}
         alt={`artist ${artist.name} image`}
