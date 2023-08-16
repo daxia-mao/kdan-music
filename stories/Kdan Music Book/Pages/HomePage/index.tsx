@@ -5,6 +5,7 @@ import PopularCategories from "@/stories/Kdan Music Book/Pages/HomePage/PopularC
 import WhyUs from "@/stories/Kdan Music Book/Pages/HomePage/WhyUs";
 import Plan from "@/stories/Kdan Music Book/Pages/HomePage/Plan";
 import Testmonials from "@/stories/Kdan Music Book/Pages/HomePage/Testmonials";
+import Footer from "@/stories/Kdan Music Book/Pages/HomePage/Footer";
 
 export default function HomePage() {
   return (
@@ -16,6 +17,7 @@ export default function HomePage() {
       <WhyUs />
       <Plan />
       <Testmonials />
+      <Footer />
     </main>
   );
 }

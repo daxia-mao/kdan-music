@@ -7,23 +7,8 @@ import S from "./index.styled";
 interface TestmonialsProps {}
 
 function Testmonials({}: TestmonialsProps) {
-  const [width, setWidth] = useState(0);
   const [scope, animate] = useAnimate();
   const isInView = useInView(scope, { once: true });
-
-  const handleResize = () => {
-    const width = window.innerWidth;
-    setWidth(width);
-  };
-
-  useEffect(() => {
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
 
   useEffect(() => {
     animate(
