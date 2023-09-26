@@ -42,3 +42,8 @@ yarn storybook
 ```
 ## 3. 介紹
 待補
+
+## 4. 參考資源
+1. [Kdan Mobile 所提供的技術規格](https://hackmd.io/@on7LKsFXRgusGofpyrHmjg/SyhX4WXJi)
+2. [Figma 設計稿](https://www.figma.com/file/C0cxEy9XvTffDC0cQ2deNM/Sounds-effect-library---responsive-landing-page-(Community)?type=design&node-id=264-713&mode=design)
+3. [Spotify Web API](https://developer.spotify.com/documentation/web-api)
