@@ -1,7 +1,13 @@
 # Kdan Music
 ![image](https://github.com/daxia-mao/kdan-music/assets/15911310/04237c73-259f-43cf-91ca-268df6eac26a)
 ## 1. 簡介
-待補
+Kdan Music 是一個使用 Spotify API 打造的音樂網站，它具有下列的特徵：
+- 搜尋曲目、專輯、藝人、合輯
+- 精選、熱門類別下的曲目
+- 相互關聯的曲目、專輯、藝人、合輯頁
+- 推薦曲目
+- 個人音樂資料庫
+- 收藏功能
 ## 2. 使用
 ### 2.1 初始化
 ```bash
