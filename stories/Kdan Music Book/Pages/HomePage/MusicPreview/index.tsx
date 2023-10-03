@@ -4,13 +4,29 @@ import Tabs, { TabsProps } from "@/stories/Kdan Music Book/Components/Tabs";
 import { fetchHooks } from "@/stories/Kdan Music Book/api";
 import React from "react";
 import S from "./index.styled";
-
+import U from "@/stories/Kdan Music Book/styled/Utils.styled";
 interface MusicPreviewProps {}
 
 export default function MusicPreview({}: MusicPreviewProps) {
-  const { data, isLoading } = fetchHooks.useGetMusicPreviewPlaylists();
+  const { data, isLoading, error } = fetchHooks.useGetMusicPreviewPlaylists();
   const playlists = data?.playlists;
 
+  if (error) {
+    return (
+      <S.Wrapper>
+        <S.Heading>熱門音樂</S.Heading>
+        <U.Error />
+      </S.Wrapper>
+    );
+  }
+  if (isLoading) {
+    return (
+      <S.Wrapper>
+        <S.Heading>熱門音樂</S.Heading>
+        <U.Loading />
+      </S.Wrapper>
+    );
+  }
   if (data) {
     const items: TabsProps["items"] =
       playlists &&

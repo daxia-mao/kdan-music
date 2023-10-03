@@ -670,7 +670,9 @@ function useGetMusicPreviewPlaylists() {
         playlists: resultPlaylistsLimit8,
         labels: ["精選", ...categoryNamesByPopularCategory],
       };
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   };
 
   return useSWR("useGetMusicPreviewPlaylists", fetcher);
