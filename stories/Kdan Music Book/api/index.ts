@@ -624,7 +624,7 @@ function useGetPlaylistsByCategoryId(arg: PlaylistsByCategoryRequest) {
 }
 
 function useGetMusicPreviewPlaylists() {
-  const country = "JP";
+  const country = "US";
   const fetcher = async () => {
     try {
       const popularCategorieRes = await fetchCategories({
