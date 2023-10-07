@@ -1,7 +1,7 @@
 # Kdan Music
 ![image](https://github.com/daxia-mao/kdan-music/assets/15911310/04237c73-259f-43cf-91ca-268df6eac26a)
 ## 1. 簡介
-嗨，這個專案主要是用於練習 React 前端技術而展開的，這是 [Demo](kdan-music.vercel.app)。
+嗨，這個專案主要是用於練習 React 前端技術而展開的，這是 [Demo](https://kdan-music.vercel.app/)。
 
 它受啟發於 Kdan Mobile 所提供的[面試作業](https://hackmd.io/@on7LKsFXRgusGofpyrHmjg/SyhX4WXJi)，並在基礎上增加了一些在規格之外的功能，它具有以下的特徵：
 - 搜尋曲目、專輯、藝人、合輯
