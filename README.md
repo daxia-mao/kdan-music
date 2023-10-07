@@ -16,11 +16,11 @@
 2. 使用 Styled-components 實現元件的 Style 及 RWD，並定義一組 Theme 用以復用實作上需要的設計元素，如：排版、顏色、斷點。
 3. 使用 Storybook 作為開發時的工作坊，並深受 Storybook 開發哲學上的啟發，以元件驅動（CDD）的方式由下至上的開發 React 元件。
 4. 使用 Typescript 定義元件及 API 請求與回應的 Interface，使程式碼在維護上更加健壯，並增加開發上的體驗。
-5. 使用 Next.js 作為 React Full Stack 框架，運用如 API Router, Dynamic Router 等功能建構服務需要的 API。
+5. 使用 Next.js 作為 React Full Stack 框架，運用如 API Router, Dynamic Router 等功能來建構服務。
 6. 使用 React Functional Component & Hooks 實現所有元件。
 7. 使用 Axios 與 SWR 作為前端資料獲取的函式庫。
 8. 使用 Redux 管理全域狀態，並使用 Redux-Thunk 中間件來處理非同步邏輯。（Redux-Toolkit）
-9. 使用 Spotify API 來存取約 20 個端點的 Spotfiy 資源 ，並將敏感資訊如 Id, Secret 存於 Server 端。
+9. 串接 Spotify API 來存取約 20 個端點的 Spotfiy 資源 ，並將敏感資訊如 Id, Secret 存於 Server 端。
 10. 串接 Spotify 的其中兩種 OAuth 2.0 認證流程，分別是 Client Credentials Flow 與 Authorization Code Flow，後者可以讓 User 主動授權 Spotfiy 帳號給網站，來存取個人化 API。
 11. 使用 Tailwind CSS 在專案內作為快速開發、試驗 Style 原型的工具。
 12. 使用 Git, Github 進行版本控制，並將專案部屬於 Next.js 官方提供的 Vercel。
