@@ -184,7 +184,7 @@ personalSpotify.interceptors.response.use(
   }
 );
 // For Storybook
-const devURL = process.env.NEXT_PUBLIC_DEV_URL;
+const devURL = process.env.NEXT_PUBLIC_DEV_URL || "https://cn2nw3-3000.csb.app";
 
 ////////// UTILS /////////
 const fetchAccessToken = async (): Promise<string> => {
@@ -624,7 +624,7 @@ function useGetPlaylistsByCategoryId(arg: PlaylistsByCategoryRequest) {
 }
 
 function useGetMusicPreviewPlaylists() {
-  const country = "JP";
+  const country = "TW";
   const fetcher = async () => {
     try {
       const popularCategorieRes = await fetchCategories({
@@ -653,8 +653,7 @@ function useGetMusicPreviewPlaylists() {
       ).map((playlist) => playlist[0]?.id);
 
       const playlistIdByFeatured = featuredPlaylistsRes[0]?.id;
-      const playlistIds = [playlistIdByFeatured, ...playlistIdsByCategores];
-
+      const playlistIds = [playlistIdByFeatured, ...playlistIdsByCategores].filter(v => v);
       const playlistsRes = await Promise.all(
         playlistIds.map((pid) => fetchPlaylistItemsById({ pid, limit: 20 }))
       );

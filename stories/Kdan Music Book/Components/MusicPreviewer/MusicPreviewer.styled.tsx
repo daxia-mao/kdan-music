@@ -64,6 +64,7 @@ const TrackDuration = styled.p`
   ${(props) => props.theme.typography.getLabel({ level: 3, weight: "reguler" })}
 `;
 const ArtistName = styled.div`
+  white-space: nowrap;
   color: ${(props) => props.theme.colors.descriptionDark};
   ${(props) =>
     props.theme.typography.getSubtitle({ level: 4, weight: "medium" })}
