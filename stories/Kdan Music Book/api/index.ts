@@ -184,7 +184,7 @@ personalSpotify.interceptors.response.use(
   }
 );
 // For Storybook
-const devURL = process.env.NEXT_PUBLIC_DEV_URL || "https://cn2nw3-3000.csb.app";
+const devURL = process.env.NEXT_PUBLIC_DEV_URL || "https://kdan-music.vercel.app";
 
 ////////// UTILS /////////
 const fetchAccessToken = async (): Promise<string> => {
