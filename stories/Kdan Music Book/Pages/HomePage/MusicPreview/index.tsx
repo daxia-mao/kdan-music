@@ -12,6 +12,7 @@ export default function MusicPreview({}: MusicPreviewProps) {
   const playlists = data?.playlists;
 
   if (error) {
+    console.error(error);
     return (
       <S.Wrapper>
         <S.Heading>熱門音樂</S.Heading>
