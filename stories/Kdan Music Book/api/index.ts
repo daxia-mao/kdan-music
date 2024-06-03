@@ -659,7 +659,7 @@ function useGetMusicPreviewPlaylists() {
       );
       const resultPlaylists = playlistsRes.map((playlist) => playlist.items);
       const resultPlaylistsValid = resultPlaylists.map((playlist) =>
-        playlist.filter((item) => item.track.preview_url)
+        playlist.filter((item) => item.track && item.track.preview_url)
       );
       const resultPlaylistsLimit8 = resultPlaylistsValid.map((playlist) =>
         playlist.slice(0, 8)
